@@ -1,0 +1,52 @@
+OBBの値取得できてないから取得できるように城
+初手アクセス違反はnewの忘れの可能性が高いゾ0xcdcdcdcdとかな！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+ObstacleFinalizeの終了処理に気使え
+createdObstの添え字戻った時に初期城
+
+当たり判定の過去の遺産 わかんなくなったら見るといいかもしれなくもない
+						//if (Collision::OBB2OBB(m_wakka[0][j].GetOBB(), GetObstacle1OBB(i))/*IsCollision(m_wakka[0][j].GetPosition(0), 0.15f, GetObstacle1Pos(i), 0.25f)*/) {
+						//	if (m_wakka[0][j].CollisionObstacle(Get1Type(i))) {
+						//		HitObstacle1(i);
+						//	}
+						//	if (m_wakka[0][j].GetElem() == SAND || m_wakka[0][j].GetElem() == SOIL) {
+						//		D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
+						//		pos.z -= m_player[0].GetPlayerPosition().z - m_player[1].GetPlayerPosition().z;
+						//		CreateObsatcle1(pos, m_wakka[0][j].GetElem());
+						//	}
+						//	m_wakka[0][j].Hit();
+						//}
+						/*if (Collision::OBB2OBB(m_wakka[0][j].GetOBB(), m_pObstacle1[i]->GetOBB()))
+						{
+							m_pObstacle1[i]->Hit();
+						}*/
+						//if (m_wakka[0][j].GetElem() == SAND)
+						//{
+						//	D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
+						//	pos.z -= m_player[0].GetPlayerPosition().z - m_player[1].GetPlayerPosition().z;
+						//	//CreateSandStorm(pos);
+						//}
+						//else if (m_wakka[0][j].GetElem() == SAND)
+						//{
+						//	D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
+						//	pos.z -= m_player[0].GetPlayerPosition().z - m_player[1].GetPlayerPosition().z;
+						//	//CreatePitfalls(pos);
+						//}
+						//for (int i = 0; i < OBSTACLE_NUM; i++) {
+	//	if (IsObstacle2Enable(i)) {
+	//		for (int j = 0; j < 5; j++) {
+	//			if (m_wakka[1][j].IsShoot()) {
+	//				//if (Collision::OBB2OBB(m_wakka[0][j].GetOBB(), GetObstacle1OBB(i))/*IsCollision(m_wakka[1][j].GetPosition(1), 0.15f, GetObstacle2Pos(i), 0.25f)*/) {
+	//				//	if (m_wakka[1][j].CollisionObstacle(Get2Type(i))) {
+	//				//		HitObstacle2(i);
+	//				//	}
+	//				//	if (m_wakka[1][j].GetElem() == SAND || m_wakka[1][j].GetElem() == SOIL) {
+	//				//		D3DXVECTOR3 pos = m_wakka[1][j].GetPosition(0);
+	//				//		pos.z -= m_player[1].GetPlayerPosition().z - m_player[0].GetPlayerPosition().z;
+	//				//		CreateObsatcle2(pos, m_wakka[1][j].GetElem());
+	//				//	}
+	//				//	m_wakka[1][j].Hit();
+	//				//}
+	//			}
+	//		}
+	//	}		
+	//}
