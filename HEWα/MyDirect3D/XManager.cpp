@@ -111,19 +111,19 @@ void XManager::SetTranslation(D3DXVECTOR3 pos) {
 }
 
 void XManager::SetRotationX(float angle) {
-	m_rotation.x = angle * (float)PI / 180.0f;
+	m_rotation.x = angle;
 }
 
 void XManager::SetRotationY(float angle) {
-	m_rotation.y = angle * (float)PI / 180.0f;
+	m_rotation.y = angle;
 }
 
 void XManager::SetRotationZ(float angle) {
-	m_rotation.z = angle * (float)PI / 180.0f;
+	m_rotation.z = angle;
 }
 
 void XManager::SetRotation(float x, float y, float z){
-	m_rotation = D3DXVECTOR3(x * D3DX_PI / 180.0f, y * D3DX_PI / 180.0f, z * D3DX_PI / 180.0f);
+	m_rotation = D3DXVECTOR3(x, y, z);
 }
 
 void XManager::SetScaling(float scale) {

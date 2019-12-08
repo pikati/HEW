@@ -5,33 +5,26 @@
 //”¼Œa0.15
 #define KAZU 4
 
-int Wakka::m_center1 = 0;
-int Wakka::m_center2 = 0;
-D3DXVECTOR3	Wakka::m_max;
-D3DXVECTOR3	Wakka::m_min;
-
 Wakka::Wakka() {
-	m_max = D3DXVECTOR3(0.15f, 0.15f, 0.15f);
-	m_min = D3DXVECTOR3(-0.15f, -0.15f, -0.15f);
 }
 
 Wakka::~Wakka() {
 }
 
-void Wakka::Initialize(ELEM elem, int i) {
+void Wakka::Initialize(ELEM elem) {
 	m_elem = elem;
-	m_shoot = false;
-	m_frame = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_model = new XManager;
 	m_model->Initialize();
-	SetPosition(i);
+	DecidePosition(0);
 	SetElem();
+	m_playerAngle = 90.0f * (D3DX_PI / 180.0f);
 }
 
-void Wakka::Update(int i) {
+void Wakka::Update() {
+	m_model->SetTranslation(m_pos);
 	m_model->Update();
-	SetPosition(i);
 }
 
 void Wakka::Draw() {
@@ -42,244 +35,130 @@ void Wakka::Finalize() {
 	m_model->Finalize();
 }
 
-void Wakka::SetPosition(int i) {
-	if (m_shoot) {
-		m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 1.0f + 0.25f * ++m_frame);
-		if (m_frame > 50) {
-			m_frame = 0;
-			m_shoot = false;
-		}
-		return;
-	}
-	if (i == 0) {
-		switch (m_elem)
-		{
-
-		case FIRE:
-			switch (m_center1)
-			{
-			case 0:
-				m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 1:
-				m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-
-			break;
-		case WATER:
-			switch (m_center1)
-			{
-			case 0:
-				m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 2:
-				m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SAND:
-			switch (m_center1)
-			{
-			case 0:
-				m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 3:
-				m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SOIL:
-			switch (m_center1)
-			{
-			case 0:
-				m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 4:
-				m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-			break;
-		case WOOD:
-			switch (m_center1)
-			{
-			case 0:
-				m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	else {
+void Wakka::DecidePosition(int center) {
 	switch (m_elem)
 	{
-
 	case FIRE:
-		switch (m_center2)
+		switch (center)
 		{
 		case 0:
-			m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		case 1:
-			m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.2f) * 0.5f);
 			break;
 		case 2:
-			m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.4f) * 0.5f);
 			break;
 		case 3:
-			m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.6f) * 0.5f);
 			break;
 		case 4:
-			m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.8f) * 0.5f);
 			break;
 		default:
 			break;
 		}
-
 		break;
+	/*case 0:
+		m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
+		break;
+	case 1:
+		m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
+		break;
+	case 2:
+		m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+		break;
+	case 3:
+		m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+		break;
+	case 4:
+		m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
+		break;*/
+	default:
 	case WATER:
-		switch (m_center2)
+		switch (center)
 		{
 		case 0:
-			m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 1:
-			m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 2:
-			m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 3:
-			m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 4:
-			m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		default:
 			break;
 		}
 		break;
 	case SAND:
-		switch (m_center2)
+		switch (center)
 		{
 		case 0:
-			m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 1:
-			m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 2:
-			m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 3:
-			m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 4:
-			m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		default:
 			break;
 		}
 		break;
 	case SOIL:
-		switch (m_center2)
+		switch (center)
 		{
 		case 0:
-			m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 1:
-			m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 2:
-			m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 3:
-			m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 4:
-			m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		default:
 			break;
 		}
 		break;
 	case WOOD:
-		switch (m_center2)
+		switch (center)
 		{
 		case 0:
-			m_model->SetTranslation(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 1:
-			m_model->SetTranslation(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 2:
-			m_model->SetTranslation(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 3:
-			m_model->SetTranslation(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 4:
-			m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		default:
 			break;
@@ -288,8 +167,6 @@ void Wakka::SetPosition(int i) {
 	default:
 		break;
 	}
-	}
-	
 }
 
 void Wakka::SetElem() {
@@ -315,308 +192,8 @@ void Wakka::SetElem() {
 	}
 }
 
-void Wakka::Chenge(int a, int i) {
-	if (i == 0) {
-		if (a == 0) {
-			m_center1++;
-			if (m_center1 > KAZU) {
-				m_center1 = 0;
-			}
-		}
-		if (a == 1) {
-			m_center1--;
-			if (m_center1 < 0) {
-				m_center1 = KAZU;
-			}
-		}
-	}
-	else {
-		if (a == 0) {
-			m_center2++;
-			if (m_center2 > KAZU) {
-				m_center2 = 0;
-			}
-		}
-		if (a == 1) {
-			m_center2--;
-			if (m_center2 < 0) {
-				m_center2 = KAZU;
-			}
-		}
-	}
-	
-}
-
-void Wakka::Shoot() {
-	m_shoot = true;
-}
-
-int Wakka::GetCenter(int i) {
-	if (i == 0) {
-		return m_center1;
-	}
-	return m_center2;
-}
-
-void Wakka::Hit() {
-	m_shoot = false;
-	m_frame = 0;
-}
-
-void Wakka::SetPlayerPosition(D3DXVECTOR3 pos) {
-	if (m_shoot) {
-		m_pos.y = pos.y;
-		m_pos.z = pos.z;
-	}
-	else {
-		m_pos = pos;
-	}
-	
-}
-
-D3DXVECTOR3 Wakka::GetPosition(int i) {
-	if (m_shoot) {
-		return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 1.0f + 0.25f * m_frame);
-	}
-	if (i == 0) {
-		switch (m_elem)
-		{
-
-		case FIRE:
-			switch (m_center1)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-
-			break;
-		case WATER:
-			switch (m_center1)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SAND:
-			switch (m_center1)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SOIL:
-			switch (m_center1)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-			break;
-		case WOOD:
-			switch (m_center1)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	else {
-		switch (m_elem)
-		{
-
-		case FIRE:
-			switch (m_center2)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-
-			break;
-		case WATER:
-			switch (m_center2)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SAND:
-			switch (m_center2)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		case SOIL:
-			switch (m_center2)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			default:
-				break;
-			}
-			break;
-		case WOOD:
-			switch (m_center2)
-			{
-			case 0:
-				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 1:
-				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 2:
-				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
-				break;
-			case 3:
-				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
-				break;
-			case 4:
-				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
-				break;
-			default:
-				break;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	return D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+D3DXVECTOR3 Wakka::GetPosition() {
+	return m_pos;
 }
 
 /*‡”Ô‚®‚¿‚á‚®‚¿‚á‚¾‚©‚ç‹C‚ð‚Â‚¯‚ëII*/
@@ -651,10 +228,6 @@ bool Wakka::CollisionObstacle(ELEM elem) {
 	}
 }
 
-bool Wakka::IsShoot() {
-	return m_shoot;
-}
-
 ELEM Wakka::GetElem() {
 	return m_elem;
 }
@@ -663,10 +236,28 @@ ELEM Wakka::GetElem() {
 //	return m_model->GetOBB();
 //}
 
-COBBTree& Wakka::GetOBB() const{
+COBBTree& Wakka::GetOBB() const {
 	return m_model->GetOBB();
 }
 
 D3DXMATRIX* Wakka::GetMatrix() {
 	return m_model->GetMatrix();
+}
+
+void Wakka::MoveForward(int frame) {
+	m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 1.0f + 0.25f * frame);
+	m_model->SetTranslation(m_pos);
+
+}
+
+void Wakka::SetPlayerPosition(D3DXVECTOR3 pos) {
+	m_playerPos = pos;
+}
+
+void Wakka::SetPosition(D3DXVECTOR3 pos) {
+	m_pos = pos;
+}
+
+void Wakka::SetPlayerAngle(float angle) {
+	m_playerAngle = angle;
 }

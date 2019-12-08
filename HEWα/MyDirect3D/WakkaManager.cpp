@@ -20,28 +20,38 @@ void WakkaManager::Initialize() {
 	m_center = 0;
 	m_frame = 0;
 	m_shoot = false;
-	m_bLerp = false;
 }
 
 void WakkaManager::Update() {
 	for (int i = 0; i < WAKKA_NUM; i++)
 	{
+		m_wakka[i].SetPlayerPosition(m_playerPos);
+		m_wakka[i].DecidePosition(m_center);
 		if (m_shoot && m_center == i)
 		{
 			ShotUpdate();
 		}
-		else if (m_bLerp)
+		else
 		{
-			LerpUpdate();
-			m_t += 0.1f;
-			if (m_t > 1.0f)
-			{
-				m_t = 0;
-				m_bLerp = false;
-			}
+			LerpUpdate(i);
 		}
-		m_wakka[i].Update(m_playerPos);
+		m_wakka[i].Update();
 	}
+}
+
+void WakkaManager::Draw() {
+	for (int i = 0; i < WAKKA_NUM; i++)
+	{
+		m_wakka[i].Draw();
+	}
+}
+
+void WakkaManager::Finalize() {
+	for (int i = WAKKA_NUM - 1; i >= 0; i--)
+	{
+		m_wakka[i].Finalize();
+	}
+	delete[] m_wakka;
 }
 
 void WakkaManager::CreateWakka(ELEM elem) {
@@ -75,105 +85,56 @@ void WakkaManager::Change(int dir) {
 	}
 }
 
-void WakkaManager::LerpUpdate() {
-	for (int i = 0; i < WAKKA_NUM; i++)
-	{
-		if (m_center != i)
-		{
-			D3DXMATRIX matStart;
-			D3DXMATRIX matEnd;
-			D3DXVECTOR3 pos = m_wakka[i].GetPosition();
-			D3DXMatrixIdentity(&matStart);
-			D3DXMatrixIdentity(&matEnd);
-			D3DXMatrixTranslation(&matStart, pos.x, pos.y, pos.z);
-			GetEndMatrix(&matEnd, i);
-			CalcInterPause(&matStart, &matStart, &matEnd, m_t);
-			m_wakka[i].SetPosition(D3DXVECTOR3(matStart._14, matStart._24, matStart._34));
-		}
-	}
+void WakkaManager::Shoot() {
+	m_shoot = true;
 }
 
-D3DXVECTOR3* WakkaManager::SphereLinear(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR3* end, float t) {
-
-	D3DXVECTOR3 s, e;
-	D3DXVec3Normalize(&s, start);
-	D3DXVec3Normalize(&e, end);
-
-
-	// 2ベクトル間の角度（鋭角側）
-	float angle = acos(D3DXVec3Dot(&s, &e));
-
-	// sinθ
-	float SinTh = sin(angle);
-
-	// 補間係数
-	float Ps = sin(angle * (1 - t));
-	float Pe = sin(angle * t);
-
-	*out = (Ps * s + Pe * e) / SinTh;
-
-	// 一応正規化して球面線形補間に
-	D3DXVec3Normalize(out, out);
-
-	return out;
+int WakkaManager::GetCenter() {
+	return m_center;
 }
 
-D3DXMATRIX* WakkaManager::CalcInterPause(D3DXMATRIX* out, D3DXMATRIX* start, D3DXMATRIX* end, float t) {
-
-	// 各姿勢ベクトル抽出
-	D3DXVECTOR3 Sy, Sz;
-	D3DXVECTOR3 Ey, Ez;
-
-	memcpy(&Sy, start->m[1], sizeof(float) * 3);
-	memcpy(&Sz, start->m[2], sizeof(float) * 3);
-	memcpy(&Ey, end->m[1], sizeof(float) * 3);
-	memcpy(&Ez, end->m[2], sizeof(float) * 3);
-
-	// 中間ベクトル算出
-	D3DXVECTOR3 IY, IZ;
-	SphereLinear(&IY, &Sy, &Ey, t);
-	SphereLinear(&IZ, &Sz, &Ez, t);
-
-	// 中間ベクトルから姿勢ベクトルを再算出
-	D3DXVECTOR3 IX;
-	D3DXVec3Cross(&IX, &IY, &IZ);
-	D3DXVec3Cross(&IY, &IZ, &IX);
-	D3DXVec3Normalize(&IX, &IX);
-	D3DXVec3Normalize(&IY, &IY);
-	D3DXVec3Normalize(&IZ, &IZ);
-
-	memset(out, 0, sizeof(D3DXMATRIX));
-	memcpy(out->m[0], &IX, sizeof(float) * 3);
-	memcpy(out->m[1], &IY, sizeof(float) * 3);
-	memcpy(out->m[2], &IZ, sizeof(float) * 3);
-	out->_44 = 1.0f;
-
-	return out;
+void WakkaManager::Hit() {
+	m_shoot = false;
+	m_frame = 0;
 }
 
-D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
+bool WakkaManager::IsShoot() {
+	return m_shoot;
+}
+
+ELEM WakkaManager::GetElem(int i) {
+	return m_wakka[i].GetElem();
+}
+
+void WakkaManager::LerpUpdate(int i) {
+	D3DXVECTOR3 startPos = m_wakka[i].GetPosition();
+	D3DXVECTOR3 endPos = GetEndPos(i);
+	Lerp(&startPos, &startPos, &endPos, 0.1f);
+	m_wakka[i].SetPosition(startPos);
+}
+
+D3DXVECTOR3	WakkaManager::GetEndPos(int i) {
 	D3DXVECTOR3 endPos;
-	D3DXVECTOR3 pos = m_wakka[i].GetPosition();
 	switch (m_wakka[i].GetElem())
 	{
 	case FIRE:
 		switch (m_center)
 		{
 		case 0:
-			endPos = D3DXVECTOR3(pos.x, pos.y, pos.z + 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 1:
-			endPos = D3DXVECTOR3(pos.x + 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 
 			break;
 		case 2:
-			endPos = D3DXVECTOR3(pos.x + 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 3:
-			endPos = D3DXVECTOR3(pos.x - 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 4:
-			endPos = D3DXVECTOR3(pos.x - 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		default:
 			break;
@@ -184,19 +145,19 @@ D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
 		switch (m_center)
 		{
 		case 0:
-			endPos = D3DXVECTOR3(pos.x - 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 1:
-			endPos = D3DXVECTOR3(pos.x, pos.y, pos.z + 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 2:
-			endPos = D3DXVECTOR3(pos.x + 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 3:
-			endPos = D3DXVECTOR3(pos.x + 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 4:
-			endPos = D3DXVECTOR3(pos.x - 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		default:
 			break;
@@ -206,19 +167,19 @@ D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
 		switch (m_center)
 		{
 		case 0:
-			endPos = D3DXVECTOR3(pos.x - 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 1:
-			endPos = D3DXVECTOR3(pos.x - 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 2:
-			endPos = D3DXVECTOR3(pos.x, pos.y, pos.z + 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 3:
-			endPos = D3DXVECTOR3(pos.x + 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 4:
-			endPos = D3DXVECTOR3(pos.x + 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		default:
 			break;
@@ -228,19 +189,19 @@ D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
 		switch (m_center)
 		{
 		case 0:
-			endPos = D3DXVECTOR3(pos.x + 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 1:
-			endPos = D3DXVECTOR3(pos.x - 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 2:
-			endPos = D3DXVECTOR3(pos.x - 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 3:
-			endPos = D3DXVECTOR3(pos.x, pos.y, pos.z + 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		case 4:
-			endPos = D3DXVECTOR3(pos.x + 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		default:
 			break;
@@ -250,19 +211,19 @@ D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
 		switch (m_center)
 		{
 		case 0:
-			endPos = D3DXVECTOR3(pos.x + 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 1:
-			endPos = D3DXVECTOR3(pos.x + 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 2:
-			endPos = D3DXVECTOR3(pos.x - 0.35f, pos.y, pos.z - 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
 			break;
 		case 3:
-			endPos = D3DXVECTOR3(pos.x - 0.5f, pos.y, pos.z);
+			endPos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
 			break;
 		case 4:
-			endPos = D3DXVECTOR3(pos.x, pos.y, pos.z + 0.5f);
+			endPos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
 			break;
 		default:
 			break;
@@ -271,11 +232,23 @@ D3DXMATRIX*	WakkaManager::GetEndMatrix(D3DXMATRIX* out, int i) {
 	default:
 		break;
 	}
-	D3DXMatrixIdentity(out);
-	D3DXMatrixTranslation(out, pos.x, pos.y, pos.z);
-	return out;
+	return endPos;
 }
 
 void WakkaManager::SetPlayerPosition(D3DXVECTOR3 playerPos) {
 	m_playerPos = playerPos;
+}
+
+D3DXVECTOR3* WakkaManager::Lerp(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR3* end, float t) {
+	out->x = start->x + t * (end->x - start->x);
+	out->y = start->y + t * (end->y - start->y);
+	out->z = start->z + t * (end->z - start->z);
+	return out;
+}
+
+void WakkaManager::SetPlayerAngle(float angle) {
+	for (int i = 0; i < WAKKA_NUM; i++)
+	{
+		m_wakka[i].SetPlayerAngle(angle);
+	}
 }

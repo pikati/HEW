@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="Cameran.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="COBBTree.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -45,6 +46,7 @@
   <ItemGroup>
     <ClInclude Include="BaseScene.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Cameran.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="COBBTree.h" />
     <ClInclude Include="Collision.h" />

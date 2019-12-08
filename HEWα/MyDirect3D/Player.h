@@ -4,6 +4,8 @@
 #include "Joycon.h"
 #include "COBBTree.h"
 
+#define ROTATE 0.04f
+
 enum DIR {
 	RIGHT,
 	LEFT,
@@ -23,16 +25,16 @@ private:
 	XManager	*m_xfile_Player;
 	XManager	*m_bloom;
 	D3DXVECTOR3 m_playerPos;
+	D3DXVECTOR3 m_prePlayerPos;
 	D3DXVECTOR3 m_bloomPos;
 	float		m_playerVerocity;
 	bool		m_itemGet;
 	bool		m_hit;
 	bool		m_deceleration;
+	/*ボタンをプレイヤー1とプレイヤー2で判別するための変数*/
 	int			m_num;
 	int         d;
-	float		player1_Rotation;
-	float		player2_Rotation;
-	DIR			m_dir;
+	float		m_angle;
 	CoolTime	m_coolTime;
 
 	void		MoveForward();
@@ -51,8 +53,10 @@ public:
 	//OBB*  GetOBB();
 	COBBTree& GetOBB() const;
 	D3DXMATRIX* GetMatrix();
-	void Rotation1(float r);
+	void Rotation();
 	CoolTime& GetCoolTime();
 	void StartCoolTime();
+	void CalcDirection();
+	float GetPlayerAngle();
 };
 

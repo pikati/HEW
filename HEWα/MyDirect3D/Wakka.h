@@ -18,33 +18,27 @@ private:
 	XManager*		m_model;
 	ELEM			m_elem;
 	D3DXVECTOR3		m_pos;
-	static D3DXVECTOR3	m_max;
-	static D3DXVECTOR3	m_min;
-	static int	m_center1;
-	static int	m_center2;
-	int			m_frame;
-	bool		m_shoot;
-
+	D3DXVECTOR3		m_playerPos;
+	float			m_playerAngle;
 	void SetElem();
-	void SetPosition(int i);
+	
 public:
 	Wakka();
 	~Wakka();
-	void Initialize(ELEM elem, int i);
-	void Update(int i);
+	void Initialize(ELEM elem);
+	void Update();
 	void Draw();
 	void Finalize();
-	static void Chenge(int a, int i);
-	static int GetCenter(int i);
-	void Shoot();
-	void Hit();
-	void SetPlayerPosition(D3DXVECTOR3);
-	D3DXVECTOR3 GetPosition(int i);
+	D3DXVECTOR3 GetPosition();
 	bool CollisionObstacle(ELEM elem);
-	bool IsShoot();
 	ELEM GetElem();
 	//OBB*  GetOBB();
 	COBBTree& GetOBB() const;
 	D3DXMATRIX* GetMatrix();
+	void MoveForward(int frame);
+	void SetPlayerPosition(D3DXVECTOR3 pos);
+	void SetPosition(D3DXVECTOR3 pos);
+	void DecidePosition(int center);
+	void SetPlayerAngle(float angle);
 };
 

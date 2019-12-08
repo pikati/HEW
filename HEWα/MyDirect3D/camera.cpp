@@ -4,6 +4,8 @@
 * @author ドメイン
 * @date 2019/10/21
 */
+#define _CRT_SECURE_NO_WARNINGS
+#include "Utility.h"
 #include "XManager.h"
 #include "main.h"
 #include "MyDirect3D.h"
@@ -16,10 +18,15 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-CAMERA g_camera;		// カメラ情報
+static CAMERA g_camera;		// カメラ情報
+static CAMERA g_camera2;		// カメラ情報
 
 LPDIRECT3DDEVICE9	m_d3dDevice;
-static float playerPosZ;
+static D3DXVECTOR3 playerPos;
+static D3DXVECTOR3 playerPos2;
+static D3DXVECTOR3 g_endPos;
+static D3DXVECTOR3 g_endPos2;
+static int i = 0;
 
 /**
 * @brief カメラの初期化
@@ -34,6 +41,11 @@ void Camera_Initialize(void)
 	g_camera.posV = D3DXVECTOR3(CAMERA_X, CAMERA_Y, CAMERA_Z);
 	g_camera.posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	g_endPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_camera2.posV = D3DXVECTOR3(CAMERA_X, CAMERA_Y, CAMERA_Z);
+	g_camera2.posR = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	g_camera2.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	g_endPos2 = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 /**
@@ -45,9 +57,22 @@ void Camera_Initialize(void)
 */
 void Camera_Update(void)
 {
-	g_camera.posV = D3DXVECTOR3(CAMERA_X, CAMERA_Y, playerPosZ - CAMERA_Z);
-	g_camera.posR = D3DXVECTOR3(0.0f, 0.2f, playerPosZ + 1.0f);
-	g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	if (i == 0)
+	{
+		g_endPos = D3DXVECTOR3(cosf(g_camera.angle) * 3.0f + playerPos.x, playerPos.y + CAMERA_Y, sinf(g_camera.angle) * -3.0f + playerPos.z);
+		Lerp(&g_camera.posV, &g_camera.posV, &g_endPos, 0.1f);
+		//g_camera.posV = D3DXVECTOR3(cosf(g_camera.angle) * 3.0f + playerPos.x, playerPos.y + CAMERA_Y, sinf(g_camera.angle) * -3.0f + playerPos.z);
+		g_camera.posR = D3DXVECTOR3(playerPos.x, 0.2f, playerPos.z + sinf(g_camera.angle));
+		g_camera.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	}
+	else
+	{
+		g_endPos2 = D3DXVECTOR3(cosf(g_camera2.angle) * 3.0f + playerPos2.x, playerPos2.y + CAMERA_Y, sinf(g_camera2.angle) * -3.0f + playerPos2.z);
+		Lerp(&g_camera2.posV, &g_camera2.posV, &g_endPos2, 0.1f);
+		//g_camera2.posV = D3DXVECTOR3(cosf(g_camera2.angle) * 3.0f + playerPos2.x, playerPos2.y + CAMERA_Y, sinf(g_camera2.angle) * -3.0f + playerPos2.z);
+		g_camera2.posR = D3DXVECTOR3(playerPos2.x, 0.2f, playerPos2.z + sinf(g_camera2.angle));
+		g_camera2.vecU = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	}
 }
 
 /**
@@ -73,8 +98,29 @@ void SetCamera(void)
 
 // ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &g_camera.mtxView);
+	i++;
+	if (i == 2)
+	{
+		i = 0;
+	}
 }
 
-void SetPlayerPosZ(float z) {
-	playerPosZ = z;
+void SetPlayerPos(D3DXVECTOR3 pos) {
+	playerPos = pos;
+}
+
+void SetPlayerAngle(float angle) {
+	g_camera.angle = angle;
+}
+
+// 球面線形補間関数
+// out   : 補間ベクトル（出力）
+// start : 開始ベクトル
+// end : 終了ベクトル
+// t : 補間値（0～1）
+D3DXVECTOR3* Lerp(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR3* end, float t) {
+	out->x = start->x + t * (end->x - start->x);
+	out->y = start->y + t * (end->y - start->y);
+	out->z = start->z + t * (end->z - start->z);
+	return out;
 }

@@ -1,15 +1,16 @@
 #pragma once
 #include "BaseScene.h"
-#include "Wakka.h"
+#include "WakkaManager.h"
 #include "XManager.h"
 #include "Player.h"
 #include "Stage.h"
 #include "Obst.h"
 #include "Goal.h"
+#include "Cameran.h"
 
-#define WAKKA 5
+#define WAKKA 2
 #define PLAYER 2
-#define STAGE 37
+#define STAGE 10//37
 static const int OBSTACLE_NUM = 100;
 static const int CREATED_OBSTACLE_NUM = 20;
 
@@ -23,10 +24,11 @@ class SceneGame : public BaseScene
 {
 private:
 	Player *m_player;
-	Wakka **m_wakka;
+	WakkaManager *m_wakka;
 	Stage *m_stage;
 	Stage *m_stageWall;
 	Stage *m_stageCurve;
+	Cameran *m_camera;
 	LPDIRECT3DDEVICE9 m_d3dDevice;
 	XManager *xmanager;
 	/*プレイヤー1用の障害物の配列*/
@@ -52,6 +54,7 @@ private:
 	void PlayerInitialize();
 	void PlayerFinalize();
 	void WakkaInitialize();
+	void WakkaUpdate();
 	void WakkaFinalize();
 	void StageInitialize();
 	void StageUpdate();
@@ -61,6 +64,9 @@ private:
 	void ObstacleUpdate();
 	void ObstacleDraw(int n);
 	void ObstacleFinalize();
+	void CameraInitialize();
+	void CameraUpdate(int player);
+	void CameraFinalize();
 	void Rendering(int a);
 
 	void CollisionUpdate();
