@@ -5,22 +5,33 @@
 //”¼Œa0.15
 #define KAZU 4
 
+int Wakka::m_center1 = 0;
+int Wakka::m_center2 = 0;
+D3DXVECTOR3	Wakka::m_max;
+D3DXVECTOR3	Wakka::m_min;
+
 Wakka::Wakka() {
+	m_max = D3DXVECTOR3(0.15f, 0.15f, 0.15f);
+	m_min = D3DXVECTOR3(-0.15f, -0.15f, -0.15f);
 }
 
 Wakka::~Wakka() {
 }
 
-void Wakka::Initialize(ELEM elem) {
+void Wakka::Initialize(ELEM elem, int i) {
 	m_elem = elem;
+	m_shoot = false;
+	m_frame = 0;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_model = new XManager;
 	m_model->Initialize();
-	SetElemModel();
+	SetPosition(i);
+	SetElem();
 }
 
-void Wakka::Update(D3DXVECTOR3 playerPos) {
-	
+void Wakka::Update(int i) {
+	m_model->Update();
+	SetPosition(i);
 }
 
 void Wakka::Draw() {
@@ -33,7 +44,7 @@ void Wakka::Finalize() {
 
 void Wakka::SetPosition(int i) {
 	if (m_shoot) {
-		
+		m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 1.0f + 0.25f * ++m_frame);
 		if (m_frame > 50) {
 			m_frame = 0;
 			m_shoot = false;
@@ -281,7 +292,7 @@ void Wakka::SetPosition(int i) {
 	
 }
 
-void Wakka::SetElemModel() {
+void Wakka::SetElem() {
 	switch (m_elem)
 	{
 	case FIRE:
@@ -304,6 +315,38 @@ void Wakka::SetElemModel() {
 	}
 }
 
+void Wakka::Chenge(int a, int i) {
+	if (i == 0) {
+		if (a == 0) {
+			m_center1++;
+			if (m_center1 > KAZU) {
+				m_center1 = 0;
+			}
+		}
+		if (a == 1) {
+			m_center1--;
+			if (m_center1 < 0) {
+				m_center1 = KAZU;
+			}
+		}
+	}
+	else {
+		if (a == 0) {
+			m_center2++;
+			if (m_center2 > KAZU) {
+				m_center2 = 0;
+			}
+		}
+		if (a == 1) {
+			m_center2--;
+			if (m_center2 < 0) {
+				m_center2 = KAZU;
+			}
+		}
+	}
+	
+}
+
 void Wakka::Shoot() {
 	m_shoot = true;
 }
@@ -320,8 +363,260 @@ void Wakka::Hit() {
 	m_frame = 0;
 }
 
-D3DXVECTOR3 Wakka::GetPosition() {
-	return m_pos;
+void Wakka::SetPlayerPosition(D3DXVECTOR3 pos) {
+	if (m_shoot) {
+		m_pos.y = pos.y;
+		m_pos.z = pos.z;
+	}
+	else {
+		m_pos = pos;
+	}
+	
+}
+
+D3DXVECTOR3 Wakka::GetPosition(int i) {
+	if (m_shoot) {
+		return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 1.0f + 0.25f * m_frame);
+	}
+	if (i == 0) {
+		switch (m_elem)
+		{
+
+		case FIRE:
+			switch (m_center1)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case WATER:
+			switch (m_center1)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		case SAND:
+			switch (m_center1)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		case SOIL:
+			switch (m_center1)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			default:
+				break;
+			}
+			break;
+		case WOOD:
+			switch (m_center1)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	else {
+		switch (m_elem)
+		{
+
+		case FIRE:
+			switch (m_center2)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			default:
+				break;
+			}
+
+			break;
+		case WATER:
+			switch (m_center2)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		case SAND:
+			switch (m_center2)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		case SOIL:
+			switch (m_center2)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			default:
+				break;
+			}
+			break;
+		case WOOD:
+			switch (m_center2)
+			{
+			case 0:
+				return D3DXVECTOR3(m_pos.x + 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 1:
+				return D3DXVECTOR3(m_pos.x + 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 2:
+				return D3DXVECTOR3(m_pos.x - 0.35f, m_pos.y, m_pos.z - 0.5f);
+				break;
+			case 3:
+				return D3DXVECTOR3(m_pos.x - 0.5f, m_pos.y, m_pos.z);
+				break;
+			case 4:
+				return D3DXVECTOR3(m_pos.x, m_pos.y, m_pos.z + 0.5f);
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	return D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 }
 
 /*‡”Ô‚®‚¿‚á‚®‚¿‚á‚¾‚©‚ç‹C‚ð‚Â‚¯‚ëII*/
@@ -374,12 +669,4 @@ COBBTree& Wakka::GetOBB() const{
 
 D3DXMATRIX* Wakka::GetMatrix() {
 	return m_model->GetMatrix();
-}
-
-void Wakka::MoveForward(int frame) {
-	m_model->SetTranslation(m_pos.x, m_pos.y, m_pos.z + 1.0f + 0.25f * frame);
-}
-
-void Wakka::SetPosition(D3DXVECTOR3 pos) {
-	m_pos = pos;
 }
