@@ -1,4 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "WakkaManager.h"
+#include "Utility.h"
 
 static const int WAKKA_NUM = 5;
 
@@ -16,10 +18,13 @@ void WakkaManager::Initialize() {
 	for (int i = 0; i < WAKKA_NUM; i++)
 	{
 		CreateWakka((ELEM)i);
+		m_shoot[i] = false;
 	}
 	m_center = 0;
 	m_frame = 0;
-	m_shoot = false;
+	
+	m_playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_playerAngle = 0.0f;
 }
 
 void WakkaManager::Update() {
@@ -27,7 +32,7 @@ void WakkaManager::Update() {
 	{
 		m_wakka[i].SetPlayerPosition(m_playerPos);
 		m_wakka[i].DecidePosition(m_center);
-		if (m_shoot && m_center == i)
+		if (m_shoot[i])
 		{
 			ShotUpdate();
 		}
@@ -63,30 +68,32 @@ void WakkaManager::ShotUpdate() {
 	if (m_frame > 50)
 	{
 		m_frame = 0;
-		m_shoot = false;
+		m_shoot[m_center] = false;
 	}
 }
 
 void WakkaManager::Change(int dir) {
 	//‰E‚ÉU‚Á‚½Žž
-	if (dir = 0)
+	if (dir == 0)
 	{
 		m_center++;
-		if (m_center > WAKKA_NUM) {
+		if (m_center >= WAKKA_NUM) {
 			m_center = 0;
 		}
 	}
 	else
 	{
 		m_center--;
-		if (m_center < WAKKA_NUM) {
+		if (m_center < 0) {
 			m_center = WAKKA_NUM - 1;
 		}
 	}
 }
 
 void WakkaManager::Shoot() {
-	m_shoot = true;
+	m_wakka[m_center].SetShotPosition(m_playerPos);
+	m_wakka[m_center].SetShotAngle(m_playerAngle);
+	m_shoot[m_center] = true;
 }
 
 int WakkaManager::GetCenter() {
@@ -94,7 +101,7 @@ int WakkaManager::GetCenter() {
 }
 
 void WakkaManager::Hit() {
-	m_shoot = false;
+	m_shoot[m_center] = false;
 	m_frame = 0;
 }
 
@@ -247,6 +254,7 @@ D3DXVECTOR3* WakkaManager::Lerp(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR
 }
 
 void WakkaManager::SetPlayerAngle(float angle) {
+	m_playerAngle = angle;
 	for (int i = 0; i < WAKKA_NUM; i++)
 	{
 		m_wakka[i].SetPlayerAngle(angle);

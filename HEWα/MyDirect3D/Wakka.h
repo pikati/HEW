@@ -19,7 +19,9 @@ private:
 	ELEM			m_elem;
 	D3DXVECTOR3		m_pos;
 	D3DXVECTOR3		m_playerPos;
+	D3DXVECTOR3		m_shotPos;
 	float			m_playerAngle;
+	float			m_shotAngle;
 	void SetElem();
 	
 public:
@@ -40,5 +42,7 @@ public:
 	void SetPosition(D3DXVECTOR3 pos);
 	void DecidePosition(int center);
 	void SetPlayerAngle(float angle);
+	void SetShotPosition(D3DXVECTOR3 pos);
+	void SetShotAngle(float angle);
 };
 

@@ -8,9 +8,10 @@ class WakkaManager
 private:
 	Wakka*		m_wakka;
 	D3DXVECTOR3 m_playerPos;
+	float		m_playerAngle;
 	int			m_center;
 	int			m_frame;
-	bool		m_shoot;
+	bool		m_shoot[5];
 
 	void ShotUpdate();
 	void LerpUpdate(int i);

@@ -20,6 +20,8 @@ void Wakka::Initialize(ELEM elem) {
 	DecidePosition(0);
 	SetElem();
 	m_playerAngle = 90.0f * (D3DX_PI / 180.0f);
+	m_shotPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_shotAngle = 0.0f;
 }
 
 void Wakka::Update() {
@@ -45,54 +47,38 @@ void Wakka::DecidePosition(int center) {
 			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		case 1:
-			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.2f) * 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f);
 			break;
 		case 2:
-			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.4f) * 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f);
 			break;
 		case 3:
-			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.6f) * 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f);
 			break;
 		case 4:
-			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle * 0.8f) * 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f);
 			break;
 		default:
 			break;
 		}
 		break;
-	/*case 0:
-		m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
-		break;
-	case 1:
-		m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
-		break;
-	case 2:
-		m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
-		break;
-	case 3:
-		m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
-		break;
-	case 4:
-		m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
-		break;*/
-	default:
 	case WATER:
 		switch (center)
 		{
 		case 0:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f);
 			break;
 		case 1:
-			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		case 2:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f);
 			break;
 		case 3:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f);
 			break;
 		case 4:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f);
 			break;
 		default:
 			break;
@@ -102,19 +88,19 @@ void Wakka::DecidePosition(int center) {
 		switch (center)
 		{
 		case 0:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f);
 			break;
 		case 1:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f);
 			break;
 		case 2:
-			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		case 3:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f);
 			break;
 		case 4:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f);
 			break;
 		default:
 			break;
@@ -124,19 +110,19 @@ void Wakka::DecidePosition(int center) {
 		switch (center)
 		{
 		case 0:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f);
 			break;
 		case 1:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f);
 			break;
 		case 2:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f);
 			break;
 		case 3:
-			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		case 4:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f);
 			break;
 		default:
 			break;
@@ -146,19 +132,19 @@ void Wakka::DecidePosition(int center) {
 		switch (center)
 		{
 		case 0:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.4f) * 0.5f);
 			break;
 		case 1:
-			m_pos = D3DXVECTOR3(m_playerPos.x + 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 0.8f) * 0.5f);
 			break;
 		case 2:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.35f, m_playerPos.y, m_playerPos.z - 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.2f) * 0.5f);
 			break;
 		case 3:
-			m_pos = D3DXVECTOR3(m_playerPos.x - 0.5f, m_playerPos.y, m_playerPos.z);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle + D3DX_PI * 1.6f) * 0.5f);
 			break;
 		case 4:
-			m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 0.5f);
+			m_pos = D3DXVECTOR3(m_playerPos.x - cosf(m_playerAngle) * 0.5f, m_playerPos.y, m_playerPos.z + sinf(m_playerAngle) * 0.5f);
 			break;
 		default:
 			break;
@@ -245,7 +231,7 @@ D3DXMATRIX* Wakka::GetMatrix() {
 }
 
 void Wakka::MoveForward(int frame) {
-	m_pos = D3DXVECTOR3(m_playerPos.x, m_playerPos.y, m_playerPos.z + 1.0f + 0.25f * frame);
+	m_pos = D3DXVECTOR3(m_shotPos.x - cosf(m_shotAngle) * (0.5f * frame), m_shotPos.y, m_shotPos.z + sinf(m_shotAngle) * (0.5f * frame));
 	m_model->SetTranslation(m_pos);
 
 }
@@ -260,4 +246,12 @@ void Wakka::SetPosition(D3DXVECTOR3 pos) {
 
 void Wakka::SetPlayerAngle(float angle) {
 	m_playerAngle = angle;
+}
+
+void Wakka::SetShotPosition(D3DXVECTOR3 pos) {
+	m_shotPos = pos;
+}
+
+void Wakka::SetShotAngle(float angle) {
+	m_shotAngle = angle;
 }

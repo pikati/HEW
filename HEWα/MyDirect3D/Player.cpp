@@ -68,7 +68,7 @@ void Player::Update() {
 	CheckCoolTime();
 	//CalcDirection();
 	//MyOutputDebugString("x:%f y:%f z:%f\n", m_playerPos.x, m_playerPos.y, m_playerPos.z);
-	MyOutputDebugString("angle:%f\n", m_angle);
+	//MyOutputDebugString("angle:%f\n", m_angle);
 }
 
 void Player::Draw() {
