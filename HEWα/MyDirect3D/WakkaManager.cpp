@@ -21,7 +21,6 @@ void WakkaManager::Initialize() {
 		m_shoot[i] = false;
 	}
 	m_center = 0;
-	m_frame = 0;
 	
 	m_playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_playerAngle = 0.0f;
@@ -31,13 +30,13 @@ void WakkaManager::Update() {
 	for (int i = 0; i < WAKKA_NUM; i++)
 	{
 		m_wakka[i].SetPlayerPosition(m_playerPos);
-		m_wakka[i].DecidePosition(m_center);
 		if (m_shoot[i])
 		{
-			ShotUpdate();
+			ShotUpdate(i);
 		}
 		else
 		{
+			m_wakka[i].DecidePosition(m_center);
 			LerpUpdate(i);
 		}
 		m_wakka[i].Update();
@@ -63,12 +62,10 @@ void WakkaManager::CreateWakka(ELEM elem) {
 	m_wakka[(int)elem].Initialize(elem);
 }
 
-void WakkaManager::ShotUpdate() {
-	m_wakka[m_center].MoveForward(++m_frame);
-	if (m_frame > 50)
+void WakkaManager::ShotUpdate(int i) {
+	if (m_wakka[i].MoveForward())
 	{
-		m_frame = 0;
-		m_shoot[m_center] = false;
+		m_shoot[i] = false;
 	}
 }
 
@@ -91,22 +88,25 @@ void WakkaManager::Change(int dir) {
 }
 
 void WakkaManager::Shoot() {
-	m_wakka[m_center].SetShotPosition(m_playerPos);
-	m_wakka[m_center].SetShotAngle(m_playerAngle);
-	m_shoot[m_center] = true;
+	if (!m_shoot[m_center])
+	{
+		m_wakka[m_center].SetShotPosition(m_playerPos);
+		m_wakka[m_center].SetShotAngle(m_playerAngle);
+		m_shoot[m_center] = true;
+	}
 }
 
 int WakkaManager::GetCenter() {
 	return m_center;
 }
 
-void WakkaManager::Hit() {
-	m_shoot[m_center] = false;
-	m_frame = 0;
+void WakkaManager::Hit(int idx) {
+	m_shoot[idx] = false;
+	m_wakka[idx].ResetFrame();
 }
 
-bool WakkaManager::IsShoot() {
-	return m_shoot;
+bool WakkaManager::IsShoot(int i) {
+	return m_shoot[i];
 }
 
 ELEM WakkaManager::GetElem(int i) {
@@ -259,4 +259,16 @@ void WakkaManager::SetPlayerAngle(float angle) {
 	{
 		m_wakka[i].SetPlayerAngle(angle);
 	}
+}
+
+COBBTree& WakkaManager::GetOBB(int idx) const{
+	return m_wakka[idx].GetOBB();
+}
+
+D3DXMATRIX* WakkaManager::GetMatrix(int idx) {
+	return m_wakka[idx].GetMatrix();
+}
+
+D3DXVECTOR3 WakkaManager::GetPosition(int idx) {
+	return m_wakka[idx].GetPosition();
 }

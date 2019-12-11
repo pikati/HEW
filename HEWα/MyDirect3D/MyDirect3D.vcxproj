@@ -28,9 +28,11 @@
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="Input.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="Joycon.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Meronpan.cpp" />
     <ClCompile Include="PitFall.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SandStorm.cpp" />
@@ -38,6 +40,7 @@
     <ClCompile Include="SceneGame.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Stage.cpp" />
+    <ClCompile Include="Taiyaki.cpp" />
     <ClCompile Include="Tree.cpp" />
     <ClCompile Include="Wakka.cpp" />
     <ClCompile Include="WakkaManager.cpp" />
@@ -55,9 +58,12 @@
     <ClInclude Include="Fire.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Joycon.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Meronpan.h" />
     <ClInclude Include="MyDirect3D.h" />
     <ClInclude Include="Obst.h" />
     <ClInclude Include="PitFall.h" />
@@ -66,6 +72,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneGame.h" />
     <ClInclude Include="Stage.h" />
+    <ClInclude Include="Taiyaki.h" />
     <ClInclude Include="Tree.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="Wakka.h" />

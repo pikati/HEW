@@ -7,6 +7,7 @@
 #include "Obst.h"
 #include "Goal.h"
 #include "Cameran.h"
+#include "ItemManager.h"
 
 #define WAKKA 2
 #define PLAYER 2
@@ -29,8 +30,8 @@ private:
 	Stage *m_stageWall;
 	Stage *m_stageCurve;
 	Cameran *m_camera;
+	ItemManager *m_itemManager;
 	LPDIRECT3DDEVICE9 m_d3dDevice;
-	XManager *xmanager;
 	/*プレイヤー1用の障害物の配列*/
 	Obst*	m_pObstacle1[OBSTACLE_NUM];
 	/*プレイヤー2用の障害物の配列*/
@@ -53,20 +54,30 @@ private:
 	void PlayerFinalize(int j);
 	void PlayerInitialize();
 	void PlayerFinalize();
+
 	void WakkaInitialize();
 	void WakkaUpdate();
 	void WakkaFinalize();
+
 	void StageInitialize();
 	void StageUpdate();
 	void StageDraw(D3DXVECTOR3 pos);
 	void StageFinalize();
+
 	void ObstacleInitialize();
 	void ObstacleUpdate();
 	void ObstacleDraw(int n);
 	void ObstacleFinalize();
+
 	void CameraInitialize();
 	void CameraUpdate(int player);
 	void CameraFinalize();
+
+	void ItemInitialize();
+	void ItemUpdate();
+	void ItemDraw(int playerNum);
+	void ItemFinalize();
+
 	void Rendering(int a);
 
 	void CollisionUpdate();

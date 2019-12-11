@@ -86,10 +86,10 @@ void XManager::Draw() {
 		m_d3dDevice->SetTexture(0, m_pTextures[i]);
 		m_pMesh->DrawSubset(i);
 	}
-	/*if (m_bOBB)
+	if (m_bOBB)
 	{
 		m_COBBTree->Draw(2);
-	}*/
+	}
 }
 
 void XManager::Finalize() {
@@ -124,6 +124,14 @@ void XManager::SetRotationZ(float angle) {
 
 void XManager::SetRotation(float x, float y, float z){
 	m_rotation = D3DXVECTOR3(x, y, z);
+}
+
+void XManager::SetRotation(D3DXVECTOR3 rot) {
+	m_rotation = rot;
+}
+
+void XManager::SetScaling(D3DXVECTOR3 scale) {
+	m_scale = scale;
 }
 
 void XManager::SetScaling(float scale) {

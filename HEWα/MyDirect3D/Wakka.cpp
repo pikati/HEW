@@ -22,6 +22,7 @@ void Wakka::Initialize(ELEM elem) {
 	m_playerAngle = 90.0f * (D3DX_PI / 180.0f);
 	m_shotPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_shotAngle = 0.0f;
+	m_frame = 0;
 }
 
 void Wakka::Update() {
@@ -230,10 +231,15 @@ D3DXMATRIX* Wakka::GetMatrix() {
 	return m_model->GetMatrix();
 }
 
-void Wakka::MoveForward(int frame) {
-	m_pos = D3DXVECTOR3(m_shotPos.x - cosf(m_shotAngle) * (0.5f * frame), m_shotPos.y, m_shotPos.z + sinf(m_shotAngle) * (0.5f * frame));
+bool Wakka::MoveForward() {
+	m_pos = D3DXVECTOR3(m_shotPos.x - cosf(m_shotAngle) * (0.25f * ++m_frame), m_shotPos.y, m_shotPos.z + sinf(m_shotAngle) * (0.25f * ++m_frame));
 	m_model->SetTranslation(m_pos);
-
+	if (m_frame > 60) 
+	{
+		m_frame = 0;
+		return true;
+	}
+	return false;
 }
 
 void Wakka::SetPlayerPosition(D3DXVECTOR3 pos) {
@@ -254,4 +260,8 @@ void Wakka::SetShotPosition(D3DXVECTOR3 pos) {
 
 void Wakka::SetShotAngle(float angle) {
 	m_shotAngle = angle;
+}
+
+void Wakka::ResetFrame() {
+	m_frame = 0;
 }

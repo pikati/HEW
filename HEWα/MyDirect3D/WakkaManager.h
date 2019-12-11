@@ -1,7 +1,7 @@
 #pragma once
 #include "Wakka.h"
 #include "Enum.h"
-
+#include "COBBTree.h"
 
 class WakkaManager
 {
@@ -10,10 +10,9 @@ private:
 	D3DXVECTOR3 m_playerPos;
 	float		m_playerAngle;
 	int			m_center;
-	int			m_frame;
 	bool		m_shoot[5];
 
-	void ShotUpdate();
+	void ShotUpdate(int i);
 	void LerpUpdate(int i);
 	D3DXVECTOR3* Lerp(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR3* end, float t);
 	D3DXVECTOR3 GetEndPos(int i);
@@ -28,10 +27,13 @@ public:
 	void Change(int dir);
 	void Shoot();
 	int  GetCenter();
-	void Hit();
-	bool IsShoot();
+	void Hit(int idx);
+	bool IsShoot(int i);
 	ELEM GetElem(int i);
 	void SetPlayerPosition(D3DXVECTOR3 playerPos);
 	void SetPlayerAngle(float angle);
+	COBBTree& GetOBB(int idx) const;
+	D3DXMATRIX* GetMatrix(int idx);
+	D3DXVECTOR3 GetPosition(int idx);
 };
 

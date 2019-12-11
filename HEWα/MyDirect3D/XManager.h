@@ -34,7 +34,9 @@ public:
 	void SetRotationY(float angle);
 	void SetRotationZ(float angle);
 	void SetRotation(float x, float y, float z);
+	void SetRotation(D3DXVECTOR3 rot);
 	/*ägèk 1:ägèkÇ≥ÇπÇΩÇ¢çsóÒ 2:äeèkó¶Åi1ÇæÇ∆ìØÇ∂Åj */
+	void SetScaling(D3DXVECTOR3 scale);
 	void SetScaling(float scale);
 	void SetScaling(float scaleX, float scaleY, float scaleZ);
 	/*OBBÇï‘Ç∑*/

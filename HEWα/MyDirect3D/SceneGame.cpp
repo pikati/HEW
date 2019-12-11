@@ -18,7 +18,8 @@
 #include "Fire.h"
 #include "Tree.h"
 #include "PitFall.h"
-
+#include "Cameran.h"
+#include "ItemManager.h"
 
 static int count = 0;
 static bool a = false;
@@ -36,8 +37,9 @@ void SceneGame::Initialize() {
 	PlayerInitialize(0);
 	PlayerInitialize(1);
 	StageInitialize();
-	//ObstacleInitialize();
+	ObstacleInitialize();
 	CameraInitialize();
+	ItemInitialize();
 	m_d3dDevice = GetDevice();
 	m_goal = new Goal;
 	m_goal->Initialize(D3DXVECTOR3(0.0f, 0.0f, 370.0f));
@@ -47,8 +49,9 @@ void SceneGame::Update() {
 	PlayerUpdate(0);
 	PlayerUpdate(1);
 	WakkaUpdate();
-	//ObstacleUpdate();
-	//CollisionUpdate();
+	ObstacleUpdate();
+	CollisionUpdate();
+	ItemUpdate();
 	if (m_goal->IsGoal(m_player->GetPlayerPosition())) {
 		MyOutputDebugString("ゴールシタヨ！\n");
 	}
@@ -56,16 +59,19 @@ void SceneGame::Update() {
 
 void SceneGame::Draw() {
 	PlayerDraw(0);
-	//ObstacleDraw(0);
+	ObstacleDraw(0);
+	ItemDraw(0);
 	PlayerDraw(1);
-	//ObstacleDraw(1);
+	ObstacleDraw(1);
+	ItemDraw(1);
 }
 
 void SceneGame::Finalize() {
 	m_goal->Finalize();
 	delete m_goal;
+	ItemFinalize();
 	CameraFinalize();
-	//ObstacleFinalize();
+	ObstacleFinalize();
 	StageFinalize();
 	PlayerFinalize(1);
 	PlayerFinalize(0);
@@ -252,6 +258,29 @@ void SceneGame::CameraFinalize() {
 	delete[] m_camera;
 }
 
+void SceneGame::ItemInitialize() {
+	m_itemManager = new ItemManager[2];
+	m_itemManager[0].Initialize();
+	m_itemManager[1].Initialize();
+	m_itemManager[0].CreateItem(D3DXVECTOR3(0.0f, 0.0f, 40.0f), TAIYAKI);
+	m_itemManager[1].CreateItem(D3DXVECTOR3(0.0f, 0.0f, 40.0f), MERONPAN);
+}
+
+void SceneGame::ItemUpdate() {
+	m_itemManager[0].Update();
+	m_itemManager[1].Update();
+}
+
+void SceneGame::ItemDraw(int playerNum) {
+	m_itemManager[playerNum].Draw();
+}
+
+void SceneGame::ItemFinalize() {
+	m_itemManager[1].Finalize();
+	m_itemManager[0].Finalize();
+	delete[] m_itemManager;
+}
+
 void SceneGame::Rendering(int a) {
 	D3DVIEWPORT9 viwePort;
 	if (a == 0) {
@@ -299,9 +328,9 @@ void SceneGame::Rendering(int a) {
 }
 
 void SceneGame::CollisionUpdate() {
-	//ColP2O();
-	//ColW2O();
-	//ColP2S();
+	ColP2O();
+	ColW2O();
+	ColP2S();
 }
 
 void SceneGame::ColP2O() {
@@ -370,291 +399,292 @@ void SceneGame::ColP2O() {
 	}
 }
 
-//void SceneGame::ColW2O() {
-//	/*わっかと初期障害物の当たり判定（絶対最適化できるゾ）*/
-//	for (int i = 0; i < OBSTACLE_NUM; i++) 
-//	{
-//		if (m_pObstacle1[i] != nullptr) 
-//		{
-//			if (m_pObstacle1[i]->IsEnable()) 
-//			{
-//				for (int j = 0; j < 5; j++) 
-//				{
-//					if (m_wakka[0][j].IsShoot()) 
-//					{
-//						if (Collision::CheckCollision(m_wakka[0][j].GetOBB(), *m_wakka[0][j].GetMatrix(), m_pObstacle1[i]->GetOBB(), *m_pObstacle1[i]->GetMatrix()))
-//						{
-//							m_wakka[0][j].Hit();
-//							if (m_pObstacle1[i]->GetElem() == DRIFTWOOD && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_pObstacle1[i]->Hit();
-//							}
-//							else if (m_pObstacle1[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_pObstacle1[i]->Hit();
-//							}
-//							else if (m_pObstacle1[i]->GetElem() == TREE && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_pObstacle1[i]->Hit();
-//							}
-//							else if (m_pObstacle1[i]->GetElem() == SANDSTORM && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_pObstacle1[i]->Hit();
-//							}
-//							else if (m_pObstacle1[i]->GetElem() == PITFALL && m_wakka[0][j].GetElem() == SOIL)
-//							{
-//								m_pObstacle1[i]->Hit();
-//							}
-//							if (!m_player[0].GetCoolTime().bCoolTime)
-//							{
-//								if (m_wakka[0][j].GetElem() == SAND)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
-//									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreateSandStorm(pos, 0);
-//								}
-//								else if (m_wakka[0][j].GetElem() == SOIL)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
-//									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreatePitfalls(pos, 0);
-//								}
-//								m_player[0].StartCoolTime();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < OBSTACLE_NUM; i++) 
-//	{
-//		if (m_pObstacle2[i] != nullptr) 
-//		{
-//			if (m_pObstacle2[i]->IsEnable()) 
-//			{
-//				for (int j = 0; j < 5; j++) 
-//				{
-//					if (m_wakka[1][j].IsShoot()) 
-//					{
-//						if (Collision::CheckCollision(m_wakka[1][j].GetOBB(), *m_wakka[1][j].GetMatrix(), m_pObstacle2[i]->GetOBB(), *m_pObstacle2[i]->GetMatrix()))
-//						{
-//							m_wakka[1][j].Hit();
-//							if (m_pObstacle2[i]->GetElem() == DRIFTWOOD && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_pObstacle2[i]->Hit();
-//							}
-//							else if (m_pObstacle2[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_pObstacle2[i]->Hit();
-//							}
-//							else if (m_pObstacle2[i]->GetElem() == TREE && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_pObstacle2[i]->Hit();
-//							}
-//							else if (m_pObstacle2[i]->GetElem() == SANDSTORM && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_pObstacle2[i]->Hit();
-//							}
-//							else if (m_pObstacle2[i]->GetElem() == PITFALL && m_wakka[0][j].GetElem() == SOIL)
-//							{
-//								m_pObstacle2[i]->Hit();
-//							}
-//							if (!m_player[1].GetCoolTime().bCoolTime)
-//							{
-//								if (m_wakka[1][j].GetElem() == SAND)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[1][j].GetPosition(1);
-//									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreateSandStorm(pos, 1);
-//								}
-//								else if (m_wakka[1][j].GetElem() == SOIL)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[1][j].GetPosition(1);
-//									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreatePitfalls(pos, 1);
-//								}
-//								m_player[1].StartCoolTime();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//
-//	/*わっかと生成された障害物の当たり判定（上に同じ）*/
-//	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-//	{
-//		if (m_1.createdObst[i] != nullptr)
-//		{
-//			if (m_1.createdObst[i]->IsEnable())
-//			{
-//				for (int j = 0; j < 5; j++)
-//				{
-//					if (m_wakka[0][j].IsShoot())
-//					{
-//						if (Collision::CheckCollision(m_wakka[0][j].GetOBB(), *m_wakka[0][j].GetMatrix(), m_1.createdObst[i]->GetOBB(), *m_1.createdObst[i]->GetMatrix()))
-//						{
-//							m_wakka[0][j].Hit();
-//							if (m_1.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_1.createdObst[i]->Hit();
-//							}
-//							else if (m_1.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_1.createdObst[i]->Hit();
-//							}
-//							else if (m_1.createdObst[i]->GetElem() == TREE && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_1.createdObst[i]->Hit();
-//							}
-//							else if (m_1.createdObst[i]->GetElem() == SANDSTORM && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_1.createdObst[i]->Hit();
-//							}
-//							else if (m_1.createdObst[i]->GetElem() == PITFALL && m_wakka[0][j].GetElem() == SOIL)
-//							{
-//								m_1.createdObst[i]->Hit();
-//							}
-//							if (!m_player[0].GetCoolTime().bCoolTime)
-//							{
-//								if (m_wakka[0][j].GetElem() == SAND)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
-//									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreateSandStorm(pos, 0);
-//								}
-//								else if (m_wakka[0][j].GetElem() == SOIL)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[0][j].GetPosition(0);
-//									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreatePitfalls(pos, 0);
-//								}
-//								m_player[0].StartCoolTime();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-//	{
-//		if (m_2.createdObst[i] != nullptr)
-//		{
-//			if (m_2.createdObst[i]->IsEnable())
-//			{
-//				for (int j = 0; j < 5; j++)
-//				{
-//					if (m_wakka[1][j].IsShoot())
-//					{
-//						if (Collision::CheckCollision(m_wakka[1][j].GetOBB(), *m_wakka[1][j].GetMatrix(), m_2.createdObst[i]->GetOBB(), *m_2.createdObst[i]->GetMatrix()))
-//						{
-//							m_wakka[1][j].Hit();
-//							if (m_2.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_2.createdObst[i]->Hit();
-//							}
-//							else if (m_2.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_2.createdObst[i]->Hit();
-//							}
-//							else if (m_2.createdObst[i]->GetElem() == TREE && m_wakka[0][j].GetElem() == FIRE)
-//							{
-//								m_2.createdObst[i]->Hit();
-//							}
-//							else if (m_2.createdObst[i]->GetElem() == SANDSTORM && m_wakka[0][j].GetElem() == WATER)
-//							{
-//								m_2.createdObst[i]->Hit();
-//							}
-//							else if (m_2.createdObst[i]->GetElem() == PITFALL && m_wakka[0][j].GetElem() == SOIL)
-//							{
-//								m_2.createdObst[i]->Hit();
-//							}
-//							if (!m_player[1].GetCoolTime().bCoolTime)
-//							{
-//								if (m_wakka[1][j].GetElem() == SAND)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[1][j].GetPosition(1);
-//									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									CreateSandStorm(pos, 1);
-//								}
-//								else if (m_wakka[1][j].GetElem() == SOIL)
-//								{
-//									D3DXVECTOR3 pos = m_wakka[1][j].GetPosition(1);
-//									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-//									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-//									float pos3 = pos1.z - pos2.z;
-//									pos.z -= pos3;
-//									pos.z += 3.0f;
-//									pos.z -= m_player[1].GetPlayerPosition().z - m_player[0].GetPlayerPosition().z;
-//									CreatePitfalls(pos, 1);
-//								}
-//								m_player[1].StartCoolTime();
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//}
-//
-//void SceneGame::ColP2S() {
-//	D3DXVECTOR3 pos = m_player[0].GetPlayerPosition();
-//	/*当たり判定必要なステージオブジェクトの数だけ繰り返すのだ*/
-//	for (int i = 0; i < STAGE * 2; i++) {
-//		/*当たり判定とる範囲はできる限り小さくしてみた！ キラッとプリ☆チャンはいいぞ*/
-//		if (fabs(pos.y - m_stageInfo[i][0].y) < 3.0f || fabs(pos.z - m_stageInfo[i][0].z) < 3.0f || fabs(pos.x - m_stageInfo[i][0].x) < 3.0f)
-//		{
-//			D3DXMATRIX mat;
-//			D3DXMATRIXA16 matTranslation, matRotation, matScale;
-//			D3DXMatrixIdentity(&mat);
-//			D3DXMatrixIdentity(&matTranslation);
-//			D3DXMatrixIdentity(&matRotation);
-//			D3DXMatrixIdentity(&matScale);
-//			D3DXMatrixTranslation(&matTranslation, m_stageWallInfo[i][0].x, m_stageWallInfo[i][0].y, m_stageWallInfo[i][0].z);
-//			D3DXMatrixRotationYawPitchRoll(&matRotation, m_stageWallInfo[i][1].y, m_stageWallInfo[i][1].x, m_stageWallInfo[i][1].z);
-//			D3DXMatrixScaling(&matScale, m_stageWallInfo[i][2].x, m_stageWallInfo[i][2].y, m_stageWallInfo[i][2].z);
-//			mat = matScale * matRotation * matTranslation;
-//			if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_stageWall->GetOBB(), mat))
-//			{
-//				m_player[0].Hit();
-//				m_player[0].HitWall();
-//			}
-//		}
-//		
-//	}
-//}
+void SceneGame::ColW2O() {
+	/*わっかと初期障害物の当たり判定（絶対最適化できるゾ）*/
+	for (int i = 0; i < OBSTACLE_NUM; i++) 
+	{
+		if (m_pObstacle1[i] != nullptr) 
+		{
+			if (m_pObstacle1[i]->IsEnable()) 
+			{
+				for (int j = 0; j < 5; j++) 
+				{
+					if (m_wakka[0].IsShoot(j)) 
+					{
+						if (Collision::CheckCollision(m_wakka[0].GetOBB(j), *m_wakka[0].GetMatrix(j), m_pObstacle1[i]->GetOBB(), *m_pObstacle1[i]->GetMatrix()))
+						{
+							m_wakka[0].Hit(j);
+							if (m_pObstacle1[i]->GetElem() == DRIFTWOOD && m_wakka[0].GetElem(j) == FIRE)
+							{
+								m_pObstacle1[i]->Hit();
+							}
+							else if (m_pObstacle1[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0].GetElem(j) == WATER)
+							{
+								m_pObstacle1[i]->Hit();
+							}
+							else if (m_pObstacle1[i]->GetElem() == TREE && m_wakka[0].GetElem(j) == FIRE)
+							{
+								m_pObstacle1[i]->Hit();
+							}
+							else if (m_pObstacle1[i]->GetElem() == SANDSTORM && m_wakka[0].GetElem(j) == WATER)
+							{
+								m_pObstacle1[i]->Hit();
+							}
+							else if (m_pObstacle1[i]->GetElem() == PITFALL && m_wakka[0].GetElem(j) == SOIL)
+							{
+								m_pObstacle1[i]->Hit();
+							}
+							if (!m_player[0].GetCoolTime().bCoolTime)
+							{
+								if (m_wakka[0].GetElem(j) == SAND)
+								{
+									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreateSandStorm(pos, 0);
+								}
+								else if (m_wakka[0].GetElem(j) == SOIL)
+								{
+									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreatePitfalls(pos, 0);
+								}
+								m_player[0].StartCoolTime();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < OBSTACLE_NUM; i++) 
+	{
+		if (m_pObstacle2[i] != nullptr) 
+		{
+			if (m_pObstacle2[i]->IsEnable()) 
+			{
+				for (int j = 0; j < 5; j++) 
+				{
+					if (m_wakka[1].IsShoot(j)) 
+					{
+						if (Collision::CheckCollision(m_wakka[1].GetOBB(j), *m_wakka[1].GetMatrix(j), m_pObstacle2[i]->GetOBB(), *m_pObstacle2[i]->GetMatrix()))
+						{
+							m_wakka[1].Hit(j);
+							if (m_pObstacle2[i]->GetElem() == DRIFTWOOD && m_wakka[1].GetElem(j) == FIRE)
+							{
+								m_pObstacle2[i]->Hit();
+							}
+							else if (m_pObstacle2[i]->GetElem() == FIREDRIFTWOOD && m_wakka[1].GetElem(j) == WATER)
+							{
+								m_pObstacle2[i]->Hit();
+							}
+							else if (m_pObstacle2[i]->GetElem() == TREE && m_wakka[1].GetElem(j) == FIRE)
+							{
+								m_pObstacle2[i]->Hit();
+							}
+							else if (m_pObstacle2[i]->GetElem() == SANDSTORM && m_wakka[1].GetElem(j) == WATER)
+							{
+								m_pObstacle2[i]->Hit();
+							}
+							else if (m_pObstacle2[i]->GetElem() == PITFALL && m_wakka[1].GetElem(j) == SOIL)
+							{
+								m_pObstacle2[i]->Hit();
+							}
+							if (!m_player[1].GetCoolTime().bCoolTime)
+							{
+								if (m_wakka[1].GetElem(j) == SAND)
+								{
+									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreateSandStorm(pos, 1);
+								}
+								else if (m_wakka[1].GetElem(j) == SOIL)
+								{
+									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreatePitfalls(pos, 1);
+								}
+								m_player[1].StartCoolTime();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/*わっかと生成された障害物の当たり判定（上に同じ）*/
+	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
+	{
+		if (m_1.createdObst[i] != nullptr)
+		{
+			if (m_1.createdObst[i]->IsEnable())
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					if (m_wakka[0].IsShoot(j))
+					{
+						if (Collision::CheckCollision(m_wakka[0].GetOBB(j), *m_wakka[0].GetMatrix(j), m_1.createdObst[i]->GetOBB(), *m_1.createdObst[i]->GetMatrix()))
+						{
+							m_wakka[0].Hit(j);
+							if (m_1.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[0].GetElem(j) == FIRE)
+							{
+								m_1.createdObst[i]->Hit();
+							}
+							else if (m_1.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0].GetElem(j) == WATER)
+							{
+								m_1.createdObst[i]->Hit();
+							}
+							else if (m_1.createdObst[i]->GetElem() == TREE && m_wakka[0].GetElem(j) == FIRE)
+							{
+								m_1.createdObst[i]->Hit();
+							}
+							else if (m_1.createdObst[i]->GetElem() == SANDSTORM && m_wakka[0].GetElem(j) == WATER)
+							{
+								m_1.createdObst[i]->Hit();
+							}
+							else if (m_1.createdObst[i]->GetElem() == PITFALL && m_wakka[0].GetElem(j) == SOIL)
+							{
+								m_1.createdObst[i]->Hit();
+							}
+							if (!m_player[0].GetCoolTime().bCoolTime)
+							{
+								if (m_wakka[0].GetElem(j) == SAND)
+								{
+									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreateSandStorm(pos, 0);
+								}
+								else if (m_wakka[0].GetElem(j) == SOIL)
+								{
+									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreatePitfalls(pos, 0);
+								}
+								m_player[0].StartCoolTime();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
+	{
+		if (m_2.createdObst[i] != nullptr)
+		{
+			if (m_2.createdObst[i]->IsEnable())
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					if (m_wakka[1].IsShoot(j))
+					{
+						if (Collision::CheckCollision(m_wakka[1].GetOBB(j), *m_wakka[1].GetMatrix(j), m_2.createdObst[i]->GetOBB(), *m_2.createdObst[i]->GetMatrix()))
+						{
+							m_wakka[1].Hit(j);
+							if (m_2.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[1].GetElem(j) == FIRE)
+							{
+								m_2.createdObst[i]->Hit();
+							}
+							else if (m_2.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[1].GetElem(j) == WATER)
+							{
+								m_2.createdObst[i]->Hit();
+							}
+							else if (m_2.createdObst[i]->GetElem() == TREE && m_wakka[1].GetElem(j) == FIRE)
+							{
+								m_2.createdObst[i]->Hit();
+							}
+							else if (m_2.createdObst[i]->GetElem() == SANDSTORM && m_wakka[1].GetElem(j) == WATER)
+							{
+								m_2.createdObst[i]->Hit();
+							}
+							else if (m_2.createdObst[i]->GetElem() == PITFALL && m_wakka[1].GetElem(j) == SOIL)
+							{
+								m_2.createdObst[i]->Hit();
+							}
+							if (!m_player[1].GetCoolTime().bCoolTime)
+							{
+								if (m_wakka[1].GetElem(j) == SAND)
+								{
+									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									CreateSandStorm(pos, 1);
+								}
+								else if (m_wakka[1].GetElem(j) == SOIL)
+								{
+									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
+									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
+									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									pos.z -= m_player[1].GetPlayerPosition().z - m_player[0].GetPlayerPosition().z;
+									CreatePitfalls(pos, 1);
+								}
+								m_player[1].StartCoolTime();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void SceneGame::ColP2S() {
+	D3DXVECTOR3 pos = m_player[0].GetPlayerPosition();
+	/*当たり判定必要なステージオブジェクトの数だけ繰り返すのだ*/
+	for (int i = 0; i < STAGE * 2; i++) {
+		/*当たり判定とる範囲はできる限り小さくしてみた！ キラッとプリ☆チャンはいいぞ*/
+		/*if (fabs(pos.y - m_stageInfo[i][0].y) < 2.0f && fabs(pos.z - m_stageInfo[i][0].z) < 2.0f && fabs(pos.x - m_stageInfo[i][0].x) < 2.0f)
+		{*/
+			D3DXMATRIX mat;
+			D3DXMATRIXA16 matTranslation, matRotation, matScale;
+			D3DXMatrixIdentity(&mat);
+			D3DXMatrixIdentity(&matTranslation);
+			D3DXMatrixIdentity(&matRotation);
+			D3DXMatrixIdentity(&matScale);
+			D3DXMatrixTranslation(&matTranslation, m_stageWallInfo[i][0].x, m_stageWallInfo[i][0].y, m_stageWallInfo[i][0].z);
+			D3DXMatrixRotationYawPitchRoll(&matRotation, m_stageWallInfo[i][1].y, m_stageWallInfo[i][1].x, m_stageWallInfo[i][1].z);
+			D3DXMatrixScaling(&matScale, m_stageWallInfo[i][2].x, m_stageWallInfo[i][2].y, m_stageWallInfo[i][2].z);
+			mat = matScale * matRotation * matTranslation;
+			if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_stageWall->GetOBB(), mat))
+			{
+				MyOutputDebugString("ｱﾀｯﾀﾖ!\n");
+				m_player[0].Hit();
+				m_player[0].HitWall();
+			}
+		/*}*/
+		
+	}
+}
 
 void SceneGame::ObstacleInitialize() {
 	for (int i = (OBSTACLE_NUM / 5) * 0; i < (OBSTACLE_NUM / 5) * 1; i++)

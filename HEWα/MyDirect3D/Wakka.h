@@ -22,6 +22,7 @@ private:
 	D3DXVECTOR3		m_shotPos;
 	float			m_playerAngle;
 	float			m_shotAngle;
+	int				m_frame;
 	void SetElem();
 	
 public:
@@ -37,12 +38,13 @@ public:
 	//OBB*  GetOBB();
 	COBBTree& GetOBB() const;
 	D3DXMATRIX* GetMatrix();
-	void MoveForward(int frame);
+	bool MoveForward();
 	void SetPlayerPosition(D3DXVECTOR3 pos);
 	void SetPosition(D3DXVECTOR3 pos);
 	void DecidePosition(int center);
 	void SetPlayerAngle(float angle);
 	void SetShotPosition(D3DXVECTOR3 pos);
 	void SetShotAngle(float angle);
+	void ResetFrame();
 };
 
