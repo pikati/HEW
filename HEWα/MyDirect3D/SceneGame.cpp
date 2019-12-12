@@ -189,6 +189,34 @@ void SceneGame::WakkaFinalize() {
 	delete[] m_wakka;
 }
 
+void SceneGame::ObstacleInitialize() {
+	m_obstacleManager = new ObstacleManager[2];
+	m_obstacleManager[0].Initialize();
+	m_obstacleManager[1].Initialize();
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++) {
+			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j), (OBST_TYPE)i);
+			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j), (OBST_TYPE)i);
+		}
+	}
+}
+
+void SceneGame::ObstacleUpdate() {
+	m_obstacleManager[0].Update();
+	m_obstacleManager[1].Update();
+}
+
+void SceneGame::ObstacleDraw(int playerIdx) {
+	m_obstacleManager[playerIdx].Draw();
+}
+
+void SceneGame::ObstacleFinalize() {
+	m_obstacleManager[1].Finalize();
+	m_obstacleManager[0].Finalize();
+	delete[] m_obstacleManager;
+}
+
 void SceneGame::StageInitialize() {
 	m_stage = new Stage;
 	m_stageWall = new Stage;
@@ -271,8 +299,8 @@ void SceneGame::ItemUpdate() {
 	m_itemManager[1].Update();
 }
 
-void SceneGame::ItemDraw(int playerNum) {
-	m_itemManager[playerNum].Draw();
+void SceneGame::ItemDraw(int playerIdx) {
+	m_itemManager[playerIdx].Draw();
 }
 
 void SceneGame::ItemFinalize() {
@@ -335,69 +363,28 @@ void SceneGame::CollisionUpdate() {
 }
 
 void SceneGame::ColP2O() {
-	/*最初に設定してある障害物との当たり判定*/
-	for (int i = 0; i < OBSTACLE_NUM; i++) 
+	int obstacleNum = m_obstacleManager[0].GetObstacleNum();
+	/*プレイヤー1と障害物の当たり判定*/
+	for (int i = 0; i < obstacleNum; i++)
 	{
-		if (m_pObstacle1[i] != nullptr) 
+		ObstacleInfo* info = m_obstacleManager[0].GetObstacleInfo(i);
+		D3DXMATRIX mat;
+		D3DXMATRIXA16 matTranslation, matRotation, matScale;
+		D3DXMatrixIdentity(&mat);
+		D3DXMatrixIdentity(&matTranslation);
+		D3DXMatrixIdentity(&matRotation);
+		D3DXMatrixIdentity(&matScale);
+		D3DXMatrixTranslation(&matTranslation, info->pos.x, info->pos.y, info->pos.z);
+		D3DXMatrixRotationYawPitchRoll(&matRotation, info->rot.y, info->rot.x, info->rot.z);
+		D3DXMatrixScaling(&matScale, 0.2f, 0.2f, 0.2f);
+		mat = matScale * matRotation * matTranslation;
+		if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_obstacleManager[0].GetOBB(info->type), mat))
 		{
-			if (m_pObstacle1[i]->IsEnable()) 
-			{
-				if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_pObstacle1[i]->GetOBB(), *m_pObstacle1[i]->GetMatrix())) 
-				{
-					m_pObstacle1[i]->Hit();
-					m_player[0].Hit();
-					MyOutputDebugString("P1ブツカッタヨ！！\n");
-				}
-			}
+			m_obstacleManager[0].Hit(i);
+			m_player[0].Hit();
 		}
 	}
-	for (int i = 0; i < OBSTACLE_NUM; i++) 
-	{
-		if (m_pObstacle2[i] != nullptr) 
-		{
-			if (m_pObstacle2[i]->IsEnable()) 
-			{
-				if (Collision::CheckCollision(m_player[1].GetOBB(), *m_player[1].GetMatrix(), m_pObstacle2[i]->GetOBB(), *m_pObstacle2[i]->GetMatrix()))
-				{
-					m_pObstacle2[i]->Hit();
-					m_player[1].Hit();
-					MyOutputDebugString("P2ブツカッタヨ！！\n");
-				}
-			}
-		}
-	}
-
-	/*後から生成された障害物の当たり判定*/
-	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++) 
-	{
-		if (m_1.createdObst[i] != nullptr) 
-		{
-			if (m_1.createdObst[i]->IsEnable())
-			{
-				if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_1.createdObst[i]->GetOBB(), *m_1.createdObst[i]->GetMatrix()))
-				{
-					m_1.createdObst[i]->Hit();
-					m_player[0].Hit();
-					MyOutputDebugString("P1ブツカッタヨ！！\n");
-				}
-			}
-		}
-	}
-	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-	{
-		if (m_2.createdObst[i] != nullptr) 
-		{
-			if (m_2.createdObst[i]->IsEnable()) 
-			{
-				if (Collision::CheckCollision(m_player[1].GetOBB(), *m_player[1].GetMatrix(), m_2.createdObst[i]->GetOBB(), *m_2.createdObst[i]->GetMatrix()))
-				{
-					m_2.createdObst[i]->Hit();
-					m_player[1].Hit();
-					MyOutputDebugString("P2ブツカッタヨ！！\n");
-				}
-			}
-		}
-	}
+	
 }
 
 void SceneGame::ColW2O() {
@@ -692,7 +679,6 @@ void SceneGame::ColP2I() {
 	for (int i = 0; i < itemNum; i++)
 	{
 		ItemInfo* info = m_itemManager[0].GetItemInfo(i);
-		D3DXVECTOR3 rot = m_itemManager[0].GetItemRotation(i);
 		D3DXMATRIX mat;
 		D3DXMATRIXA16 matTranslation, matRotation, matScale;
 		D3DXMatrixIdentity(&mat);
@@ -744,249 +730,6 @@ void SceneGame::ColP2I() {
 			}
 			m_itemManager[1].Hit(i);
 		}
-	}
-}
-
-void SceneGame::ObstacleInitialize() {
-	for (int i = (OBSTACLE_NUM / 5) * 0; i < (OBSTACLE_NUM / 5) * 1; i++)
-	{
-		m_pObstacle1[i] = new Fire;
-		m_pObstacle1[i]->Initialize();
-		m_pObstacle1[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 0; i < (OBSTACLE_NUM / 5) * 1; i++)
-	{
-		m_pObstacle2[i] = new Fire;
-		m_pObstacle2[i]->Initialize();
-		m_pObstacle2[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 1; i < (OBSTACLE_NUM / 5) * 2; i++)
-	{
-		m_pObstacle1[i] = new Tree;
-		m_pObstacle1[i]->Initialize();
-		m_pObstacle1[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 1; i < (OBSTACLE_NUM / 5) * 2; i++)
-	{
-		m_pObstacle2[i] = new Tree;
-		m_pObstacle2[i]->Initialize();
-		m_pObstacle2[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 2; i < (OBSTACLE_NUM / 5) * 3; i++)
-	{
-		m_pObstacle1[i] = new DriftWood;
-		m_pObstacle1[i]->Initialize();
-		m_pObstacle1[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 2; i < (OBSTACLE_NUM / 5) * 3; i++)
-	{
-		m_pObstacle2[i] = new DriftWood;
-		m_pObstacle2[i]->Initialize();
-		m_pObstacle2[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 3; i < (OBSTACLE_NUM / 5) * 4; i++)
-	{
-		m_pObstacle1[i] = new SandStorm;
-		m_pObstacle1[i]->Initialize();
-		m_pObstacle1[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 3; i < (OBSTACLE_NUM / 5) * 4; i++)
-	{
-		m_pObstacle2[i] = new SandStorm;
-		m_pObstacle2[i]->Initialize();
-		m_pObstacle2[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 4; i < (OBSTACLE_NUM / 5) * 5; i++)
-	{
-		m_pObstacle1[i] = new PitFall;
-		m_pObstacle1[i]->Initialize();
-		m_pObstacle1[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 4; i < (OBSTACLE_NUM / 5) * 5; i++)
-	{
-		m_pObstacle2[i] = new PitFall;
-		m_pObstacle2[i]->Initialize();
-		m_pObstacle2[i]->SetPosition(D3DXVECTOR3(float(rand() % 3) * 0.5f - 0.5f, 0.0f, i * 5.0f + 5.0f));
-	}
-
-	for (int i = 0; i < CREATED_OBSTACLE_NUM / 2; i++) 
-	{
-		m_1.createdObst[i] = new SandStorm;
-		m_1.createdObst[i]->Initialize();
-		m_1.createdObst[i]->SetPosition(D3DXVECTOR3(0.0f, -100.0f, 0.0f));
-	}
-
-	for (int i = CREATED_OBSTACLE_NUM / 2; i < CREATED_OBSTACLE_NUM; i++)
-	{
-		m_1.createdObst[i] = new PitFall;
-		m_1.createdObst[i]->Initialize();
-		m_1.createdObst[i]->SetPosition(D3DXVECTOR3(0.0f, -100.0f, 0.0f));
-	}
-
-	for (int i = 0; i < CREATED_OBSTACLE_NUM / 2; i++)
-	{
-		m_2.createdObst[i] = new SandStorm;
-		m_2.createdObst[i]->Initialize();
-		m_2.createdObst[i]->SetPosition(D3DXVECTOR3(0.0f, -100.0f, 0.0f));
-	}
-
-	for (int i = CREATED_OBSTACLE_NUM / 2; i < CREATED_OBSTACLE_NUM; i++)
-	{
-		m_2.createdObst[i] = new PitFall;
-		m_2.createdObst[i]->Initialize();
-		m_2.createdObst[i]->SetPosition(D3DXVECTOR3(0.0f, -100.0f, 0.0f));
-	}
-
-	m_1.pitFallCounter = 10;
-	m_1.sandStormCounter = 0;
-	m_2.pitFallCounter = 10;
-	m_2.sandStormCounter = 0;
-	/*for (int i = 5; i < 10; i++) {
-		m_pObstacle1[i] = new SandStorm;
-		m_pObstacle1[i]->Initialize();
-	}
-
-	for (int i = 15; i < OBSTACLE_NUM; i++) {
-		m_pObstacle1[i] = new SandStorm;
-		m_pObstacle1[i]->Initialize();
-	}*/
-}
-
-void SceneGame::ObstacleUpdate() {
-	D3DXVECTOR3 p1Pos = m_player[0].GetPlayerPosition();
-	D3DXVECTOR3 p2Pos = m_player[1].GetPlayerPosition();
-	for (int i = 0; i < OBSTACLE_NUM; i++) 
-	{
-		m_pObstacle1[i]->SetPlayerPos(p1Pos);
-		m_pObstacle1[i]->Update();
-		m_pObstacle2[i]->SetPlayerPos(p2Pos);
-		m_pObstacle2[i]->Update();
-	}
-	for (int i = 0; i < CREATED_OBSTACLE_NUM ; i++)
-	{
-		m_1.createdObst[i]->SetPlayerPos(p1Pos);
-		m_1.createdObst[i]->Update();
-		m_2.createdObst[i]->SetPlayerPos(p2Pos);
-		m_2.createdObst[i]->Update();
-	}
-}
-
-void SceneGame::ObstacleDraw(int n) {
-	if (n == 0) 
-	{
-		for (int i = 0; i < OBSTACLE_NUM; i++)
-		{
-			if (m_pObstacle1[i]->IsEnable())
-			{
-				m_pObstacle1[i]->Draw();
-			}
-		}
-		for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-		{
-			if (m_1.createdObst[i]->IsEnable())
-			{
-				m_1.createdObst[i]->Draw();
-			}
-		}
-	}
-	else 
-	{
-		for (int i = 0; i < OBSTACLE_NUM; i++)
-		{
-			if (m_pObstacle2[i]->IsEnable())
-			{
-				m_pObstacle2[i]->Draw();
-			}
-		}
-		for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-		{
-			if (m_2.createdObst[i]->IsEnable())
-			{
-				m_2.createdObst[i]->Draw();
-			}
-		}
-	}
-}
-
-void SceneGame::ObstacleFinalize() {
-
-	for (int i = CREATED_OBSTACLE_NUM - 1; i >= 0; i--) {
-		m_2.createdObst[i]->Finalize();
-		delete m_2.createdObst[i];
-	}
-
-	for (int i = CREATED_OBSTACLE_NUM - 1; i >= 0; i--) {
-		m_1.createdObst[i]->Finalize();
-		delete m_1.createdObst[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 5 - 1; i >= (OBSTACLE_NUM / 5) * 4; i--)
-	{
-		m_pObstacle2[i]->Finalize();
-		delete m_pObstacle2[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 5 - 1; i >= (OBSTACLE_NUM / 5) * 4; i--)
-	{
-		m_pObstacle1[i]->Finalize();
-		delete m_pObstacle1[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 4 - 1; i >= (OBSTACLE_NUM / 5) * 3; i--)
-	{
-		m_pObstacle2[i]->Finalize();
-		delete m_pObstacle2[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 4 - 1; i >= (OBSTACLE_NUM / 5) * 3; i--)
-	{
-		m_pObstacle1[i]->Finalize();
-		delete m_pObstacle1[i];
-	}
-	
-	for (int i = (OBSTACLE_NUM / 5) * 3 - 1; i >= (OBSTACLE_NUM / 5) * 2; i--)
-	{
-		m_pObstacle2[i]->Finalize();
-		delete m_pObstacle2[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 3 - 1; i >= (OBSTACLE_NUM / 5) * 2; i--)
-	{
-		m_pObstacle1[i]->Finalize();
-		delete m_pObstacle1[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 2 - 1; i >= (OBSTACLE_NUM / 5) * 1; i--)
-	{
-		m_pObstacle2[i]->Finalize();
-		delete m_pObstacle2[i];
-	}
-	
-	for (int i = (OBSTACLE_NUM / 5) * 2 - 1; i >= (OBSTACLE_NUM / 5) * 1; i--)
-	{
-		m_pObstacle1[i]->Finalize();
-		delete m_pObstacle1[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 1 - 1; i >= (OBSTACLE_NUM / 5) * 0; i--)
-	{
-		m_pObstacle2[i]->Finalize();
-		delete m_pObstacle2[i];
-	}
-
-	for (int i = (OBSTACLE_NUM / 5) * 1 - 1; i >= (OBSTACLE_NUM / 5) * 0; i--)
-	{
-		m_pObstacle1[i]->Finalize();
-		delete m_pObstacle1[i];
 	}
 }
 

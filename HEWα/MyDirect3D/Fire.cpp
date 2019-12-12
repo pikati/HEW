@@ -13,9 +13,7 @@ Fire::~Fire()
 
 void Fire::Initialize()
 {
-	m_pos.x = /*((float)(rand() % 10) - 5.0f) * 0.2f*/0.0f;
-	m_pos.y = 0.2f;
-	m_pos.z = 5.0f;
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_pXmanager = new XManager;
 	m_pXmanager->Initialize();
 	m_pXmanager->SetTranslation(m_pos);

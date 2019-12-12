@@ -8,45 +8,29 @@
 #include "Goal.h"
 #include "Cameran.h"
 #include "ItemManager.h"
+#include "ObstacleManager.h"
 
 #define WAKKA 2
 #define PLAYER 2
 #define STAGE 10//37
-static const int OBSTACLE_NUM = 100;
-static const int CREATED_OBSTACLE_NUM = 20;
-
-struct CreatedObst{
-	Obst*	createdObst[20];
-	int		sandStormCounter;
-	int		pitFallCounter;
-};
 
 class SceneGame : public BaseScene
 {
 private:
-	Player *m_player;
-	WakkaManager *m_wakka;
-	Stage *m_stage;
-	Stage *m_stageWall;
-	Stage *m_stageCurve;
-	Cameran *m_camera;
-	ItemManager *m_itemManager;
+	Player* m_player;
+	WakkaManager* m_wakka;
+	ObstacleManager* m_obstacleManager;
+	Stage* m_stage;
+	Stage* m_stageWall;
+	Stage* m_stageCurve;
+	Cameran* m_camera;
+	ItemManager* m_itemManager;
 	LPDIRECT3DDEVICE9 m_d3dDevice;
-	/*プレイヤー1用の障害物の配列*/
-	Obst*	m_pObstacle1[OBSTACLE_NUM];
-	/*プレイヤー2用の障害物の配列*/
-	Obst*	m_pObstacle2[OBSTACLE_NUM];
-	/*プレイヤー1用の新しく生成する障害物用の配列*/
-	CreatedObst m_1;
-	/*プレイヤー2用の新しく生成する障害物用の配列*/
-	CreatedObst m_2;
 	Goal*	m_goal;
 
 	D3DXVECTOR3 m_stageInfo[STAGE][3];
 	D3DXVECTOR3 m_stageWallInfo[STAGE * 2][3];
 	D3DXVECTOR3 m_stageCurveInfo[STAGE][3];
-
-
 
 	void PlayerInitialize(int j);
 	void PlayerUpdate(int j);
@@ -66,7 +50,7 @@ private:
 
 	void ObstacleInitialize();
 	void ObstacleUpdate();
-	void ObstacleDraw(int n);
+	void ObstacleDraw(int playerIdx);
 	void ObstacleFinalize();
 
 	void CameraInitialize();
@@ -75,7 +59,7 @@ private:
 
 	void ItemInitialize();
 	void ItemUpdate();
-	void ItemDraw(int playerNum);
+	void ItemDraw(int playerIdx);
 	void ItemFinalize();
 
 	void Rendering(int a);
