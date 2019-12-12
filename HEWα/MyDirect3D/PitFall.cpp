@@ -92,6 +92,14 @@ void PitFall::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
 }
 
+void PitFall::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
+}
+
+void PitFall::SetScale(D3DXVECTOR3 scale) {
+	m_scale = scale;
+}
+
 COBBTree& PitFall::GetOBB() const {
 	return m_pXmanager->GetOBB();
 }
@@ -105,6 +113,6 @@ void PitFall::Reset() {
 	m_bHit = false;
 }
 
-OBST_ELEM PitFall::GetElem() {
+OBST_TYPE PitFall::GetElem() {
 	return m_elem;
 }

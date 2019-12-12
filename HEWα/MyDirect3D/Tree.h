@@ -18,9 +18,11 @@ public:
 	virtual void	SetPlayerPos(D3DXVECTOR3 pos);
 	//virtual OBB*	GetOBB();
 	virtual void	SetPosition(D3DXVECTOR3 pos);
+	virtual void	SetRotation(D3DXVECTOR3 rot);
+	virtual void	SetScale(D3DXVECTOR3 scale);
 	virtual COBBTree& GetOBB() const;
 	virtual D3DXMATRIX* GetMatrix();
 	virtual void	Reset();
-	virtual OBST_ELEM GetElem();
+	virtual OBST_TYPE GetElem();
 };
 

@@ -1,5 +1,6 @@
 #include "Cameran.h"
 #include "main.h"
+#include "CameraMediator.h"
 #define CAMERA_X 0.0f
 #define CAMERA_Y 1.5f
 #define CAMERA_Z 3.0f
@@ -62,6 +63,9 @@ void Cameran::SetCamera(void)
 
 // ビューマトリックスの設定
 	pDevice->SetTransform(D3DTS_VIEW, &m_mtxView);
+	D3DXMATRIX mat;
+	mat = m_mtxView * m_mtxProjection;
+	CameraMediator::SetCameraMatrix(&mat);
 }
 
 void Cameran::SetPlayerPos(D3DXVECTOR3 pos) {

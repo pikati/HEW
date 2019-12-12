@@ -3,8 +3,11 @@
 #include "MyDirect3D.h"
 #include "Joycon.h"
 #include "COBBTree.h"
+#include "ItemManager.h"
 
 #define ROTATE 0.04f
+#define MAX_SPEED 10.0f
+#define MIN_SPEED 5.0f
 
 enum DIR {
 	RIGHT,
@@ -35,11 +38,15 @@ private:
 	int			m_num;
 	int         d;
 	float		m_angle;
+	float		m_maxSpeed;
+	float		m_minSpeed;
+	int			m_effectTime;
 	CoolTime	m_coolTime;
 
 	void		MoveForward();
 	void		MoveSide();
 	void		CheckCoolTime();
+	void		UpdateEffect();
 public:
 	Player();
 	~Player();
@@ -58,5 +65,6 @@ public:
 	void StartCoolTime();
 	void CalcDirection();
 	float GetPlayerAngle();
+	void GetItemEffect(ITEM_TYPE type);
 };
 

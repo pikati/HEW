@@ -81,9 +81,13 @@ private:
 	void Rendering(int a);
 
 	void CollisionUpdate();
+	//!プレイヤーと障害物
 	void ColP2O();
+	//!わっかと障害物
 	void ColW2O();
-	//プレイヤーとステージ
+	//!プレイヤーとアイテム
+	void ColP2I();
+	//!プレイヤーとステージ
 	void ColP2S();
 	void CreatePitfalls(D3DXVECTOR3 pos, int n);
 	void CreateSandStorm(D3DXVECTOR3 pos, int n);

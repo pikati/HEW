@@ -48,6 +48,11 @@ void Player::Initialize(int i) {
 	m_coolTime.bCoolTime = false;
 	m_coolTime.coolTime = COOL_TIME;
 
+	m_maxSpeed = MAX_SPEED;
+	m_minSpeed = MIN_SPEED;
+
+	m_effectTime = 0;
+
 	Camera_Initialize();
 
 	m_angle = 90.0f * (D3DX_PI / 180.0f);
@@ -56,6 +61,7 @@ void Player::Initialize(int i) {
 
 void Player::Update() {
 	m_hit = false;
+	UpdateEffect();
 	MoveSide();
 	MoveForward();
 
@@ -93,22 +99,22 @@ void Player::MoveForward() {
 	{
 		//当たったら減速　一定値以下になったらfalseにしてまた加速
 		m_playerVerocity -= 0.2f;
-		if (m_playerVerocity <= 5.0f)
+		if (m_playerVerocity <= m_minSpeed)
 		{
-			m_playerVerocity = 5.0f;
+			m_playerVerocity = m_minSpeed;
 			m_deceleration = false;
 		}
 	}
 
-	//プレイヤーの速さ　2.0より速くはならない
-	if (m_playerVerocity >= 10.0f)
+	//プレイヤーの速さ
+	if (m_playerVerocity >= m_maxSpeed)
 	{
-		m_playerVerocity = 10.0f;
+		m_playerVerocity = m_maxSpeed;
 	}
 	//0.01より遅くはならない
-	if (m_playerVerocity < 0.01f)
+	if (m_playerVerocity < m_minSpeed)
 	{
-		m_playerVerocity = 0.01f;
+		m_playerVerocity = m_minSpeed;
 	}
 	//自動前進
 	m_playerPos.z += sinf(m_angle) * 0.015f * m_playerVerocity;
@@ -122,62 +128,22 @@ void Player::MoveSide() {
 	if (m_num == 0) {
 		if (Input::GetKey(DIK_D) || g_diJoyState2[0] & BUTTON_RIGHT)
 		{
-			/*m_playerPos.x += 0.05f;
-			m_bloomPos.x += 0.05f;
-			m_dir = RIGHT;
-			if (m_playerPos.x >= 0.9f)
-			{
-				HitWall();
-				Hit();
-			}*/
 			m_angle += ROTATE;
 		}
 		else if (Input::GetKey(DIK_A) || g_diJoyState2[0] & BUTTON_LEFT)
 		{
-			/*m_playerPos.x -= 0.05f;
-			m_bloomPos.x -= 0.05f;
-			m_dir = LEFT;
-			if (m_playerPos.x <= -0.9f)
-			{
-				HitWall();
-				Hit();
-			}*/
 			m_angle += -ROTATE;
 		}
-		/*else
-		{
-			m_dir = NON;
-		}*/
 	}
 	else {
 		if (Input::GetKey(DIK_L) || g_diJoyState2[2] & BUTTON_RIGHT)
 		{
-			/*m_playerPos.x += 0.05f;
-			m_bloomPos.x += 0.05f;
-			m_dir = RIGHT;
-			if (m_playerPos.x >= 0.9f)
-			{
-				HitWall();
-				Hit();
-			}*/
 			m_angle += ROTATE;
 		}
 		else if (Input::GetKey(DIK_J) || g_diJoyState2[2] & BUTTON_LEFT)
 		{
-			/*m_playerPos.x -= 0.05f;
-			m_bloomPos.x -= 0.05f;
-			m_dir = LEFT;
-			if (m_playerPos.x <= -0.9f)
-			{
-				HitWall();
-				Hit();
-			}*/
 			m_angle += -ROTATE;
 		}
-		/*else
-		{
-			m_dir = NON;
-		}*/
 	}
 }
 
@@ -268,4 +234,32 @@ void Player::CalcDirection() {
 
 float Player::GetPlayerAngle() {
 	return m_angle;
+}
+
+void Player::GetItemEffect(ITEM_TYPE type) {
+	if (type == TAIYAKI)
+	{
+		m_maxSpeed = 20.0f;
+		m_minSpeed = 10.0f;
+		m_effectTime = 150;
+	}
+	else if (type == MERONPAN)
+	{
+		m_maxSpeed = 7.5f;
+		m_minSpeed = 5.0f;
+		m_effectTime = 150;
+	}
+}
+
+void Player::UpdateEffect() {
+	if (m_effectTime > 0)
+	{
+		m_effectTime--;
+	}
+	else
+	{
+		m_effectTime = 0;
+		m_maxSpeed = MAX_SPEED;
+		m_minSpeed = MIN_SPEED;
+	}
 }

@@ -16,6 +16,8 @@ void DriftWood::Initialize()
 	m_pos.x = /*((float)(rand() % 10) - 5.0f) * 0.2f*/0.0f;
 	m_pos.y = 0.2f;
 	m_pos.z = 5.0f;
+	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	m_pXmanager = new XManager;
 	m_pXmanager->Initialize();
 	m_pXmanager->SetTranslation(m_pos);
@@ -93,6 +95,14 @@ void DriftWood::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
 }
 
+void DriftWood::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
+}
+
+void DriftWood::SetScale(D3DXVECTOR3 scale) {
+	m_scale = scale;
+}
+
 COBBTree& DriftWood::GetOBB() const{
 	return m_pXmanager->GetOBB();
 }
@@ -106,6 +116,6 @@ void DriftWood::Reset() {
 	m_bHit = false;
 }
 
-OBST_ELEM DriftWood::GetElem(){
+OBST_TYPE DriftWood::GetElem() {
 	return m_elem;
 }

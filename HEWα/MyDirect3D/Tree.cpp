@@ -92,6 +92,14 @@ void Tree::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
 }
 
+void Tree::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
+}
+
+void Tree::SetScale(D3DXVECTOR3 scale) {
+	m_scale = scale;
+}
+
 COBBTree& Tree::GetOBB() const {
 	return m_pXmanager->GetOBB();
 }
@@ -105,6 +113,6 @@ void Tree::Reset() {
 	m_bHit = false;
 }
 
-OBST_ELEM Tree::GetElem() {
+OBST_TYPE Tree::GetElem() {
 	return m_elem;
 }

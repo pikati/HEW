@@ -37,7 +37,7 @@ void SceneGame::Initialize() {
 	PlayerInitialize(0);
 	PlayerInitialize(1);
 	StageInitialize();
-	ObstacleInitialize();
+	//ObstacleInitialize();
 	CameraInitialize();
 	ItemInitialize();
 	m_d3dDevice = GetDevice();
@@ -49,7 +49,7 @@ void SceneGame::Update() {
 	PlayerUpdate(0);
 	PlayerUpdate(1);
 	WakkaUpdate();
-	ObstacleUpdate();
+	//ObstacleUpdate();
 	CollisionUpdate();
 	ItemUpdate();
 	if (m_goal->IsGoal(m_player->GetPlayerPosition())) {
@@ -59,10 +59,10 @@ void SceneGame::Update() {
 
 void SceneGame::Draw() {
 	PlayerDraw(0);
-	ObstacleDraw(0);
+	//ObstacleDraw(0);
 	ItemDraw(0);
 	PlayerDraw(1);
-	ObstacleDraw(1);
+	//ObstacleDraw(1);
 	ItemDraw(1);
 }
 
@@ -71,7 +71,7 @@ void SceneGame::Finalize() {
 	delete m_goal;
 	ItemFinalize();
 	CameraFinalize();
-	ObstacleFinalize();
+	//ObstacleFinalize();
 	StageFinalize();
 	PlayerFinalize(1);
 	PlayerFinalize(0);
@@ -328,8 +328,9 @@ void SceneGame::Rendering(int a) {
 }
 
 void SceneGame::CollisionUpdate() {
-	ColP2O();
-	ColW2O();
+	//ColP2O();
+	//ColW2O();
+	ColP2I();
 	ColP2S();
 }
 
@@ -683,6 +684,66 @@ void SceneGame::ColP2S() {
 			}
 		/*}*/
 		
+	}
+}
+
+void SceneGame::ColP2I() {
+	int itemNum = m_itemManager[0].GetItemNum();
+	for (int i = 0; i < itemNum; i++)
+	{
+		ItemInfo* info = m_itemManager[0].GetItemInfo(i);
+		D3DXVECTOR3 rot = m_itemManager[0].GetItemRotation(i);
+		D3DXMATRIX mat;
+		D3DXMATRIXA16 matTranslation, matRotation, matScale;
+		D3DXMatrixIdentity(&mat);
+		D3DXMatrixIdentity(&matTranslation);
+		D3DXMatrixIdentity(&matRotation);
+		D3DXMatrixIdentity(&matScale);
+		D3DXMatrixTranslation(&matTranslation, info->pos.x, info->pos.y, info->pos.z);
+		D3DXMatrixRotationYawPitchRoll(&matRotation, info->rot.y, info->rot.x, info->rot.z);
+		D3DXMatrixScaling(&matScale, 0.2f, 0.2f, 0.2f);
+		mat = matScale * matRotation * matTranslation;
+		if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_itemManager[0].GetOBB(info->type), mat))
+		{
+			if (info->type == TAIYAKI)
+			{
+				m_player[0].GetItemEffect(TAIYAKI);
+			}
+			else
+			{
+				m_player[1].GetItemEffect(MERONPAN);
+			}
+			m_itemManager[0].Hit(i);
+		}
+	}
+
+	itemNum = m_itemManager[1].GetItemNum();
+	for (int i = 0; i < itemNum; i++)
+	{
+		ItemInfo* info = m_itemManager[1].GetItemInfo(i);
+		D3DXVECTOR3 rot = m_itemManager[1].GetItemRotation(i);
+		D3DXMATRIX mat;
+		D3DXMATRIXA16 matTranslation, matRotation, matScale;
+		D3DXMatrixIdentity(&mat);
+		D3DXMatrixIdentity(&matTranslation);
+		D3DXMatrixIdentity(&matRotation);
+		D3DXMatrixIdentity(&matScale);
+		D3DXMatrixTranslation(&matTranslation, info->pos.x, info->pos.y, info->pos.z);
+		D3DXMatrixRotationYawPitchRoll(&matRotation, info->rot.y, info->rot.x, info->rot.z);
+		D3DXMatrixScaling(&matScale, 0.2f, 0.2f, 0.2f);
+		mat = matScale * matRotation * matTranslation;
+		if (Collision::CheckCollision(m_player[1].GetOBB(), *m_player[1].GetMatrix(), m_itemManager[1].GetOBB(info->type), mat))
+		{
+			if (info->type == TAIYAKI)
+			{
+				m_player[1].GetItemEffect(TAIYAKI);
+			}
+			else
+			{
+				m_player[0].GetItemEffect(MERONPAN);
+			}
+			m_itemManager[1].Hit(i);
+		}
 	}
 }
 

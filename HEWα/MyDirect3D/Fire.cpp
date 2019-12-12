@@ -92,6 +92,14 @@ void Fire::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
 }
 
+void Fire::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
+}
+
+void Fire::SetScale(D3DXVECTOR3 scale) {
+	m_scale = scale;
+}
+
 COBBTree& Fire::GetOBB() const {
 	return m_pXmanager->GetOBB();
 }
@@ -105,6 +113,6 @@ void Fire::Reset() {
 	m_bHit = false;
 }
 
-OBST_ELEM Fire::GetElem() {
+OBST_TYPE Fire::GetElem() {
 	return m_elem;
 }

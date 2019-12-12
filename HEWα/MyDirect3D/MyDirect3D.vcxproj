@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="CameraMediator.cpp" />
     <ClCompile Include="Cameran.cpp" />
     <ClCompile Include="Circle.cpp" />
     <ClCompile Include="COBBTree.cpp" />
@@ -33,6 +34,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Meronpan.cpp" />
+    <ClCompile Include="ObstacleManager.cpp" />
     <ClCompile Include="PitFall.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SandStorm.cpp" />
@@ -49,6 +51,7 @@
   <ItemGroup>
     <ClInclude Include="BaseScene.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="CameraMediator.h" />
     <ClInclude Include="Cameran.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="COBBTree.h" />
@@ -66,6 +69,7 @@
     <ClInclude Include="Meronpan.h" />
     <ClInclude Include="MyDirect3D.h" />
     <ClInclude Include="Obst.h" />
+    <ClInclude Include="ObstacleManager.h" />
     <ClInclude Include="PitFall.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="SandStorm.h" />

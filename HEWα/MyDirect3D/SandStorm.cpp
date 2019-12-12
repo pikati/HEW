@@ -94,6 +94,14 @@ void SandStorm::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
 }
 
+void SandStorm::SetRotation(D3DXVECTOR3 rot) {
+	m_rot = rot;
+}
+
+void SandStorm::SetScale(D3DXVECTOR3 scale) {
+	m_scale = scale;
+}
+
 COBBTree& SandStorm::GetOBB() const{
 	return m_pXmanager->GetOBB();
 }
@@ -107,6 +115,6 @@ void SandStorm::Reset() {
 	 m_bHit = false;
 }
 
-OBST_ELEM SandStorm::GetElem() {
+OBST_TYPE SandStorm::GetElem() {
 	return m_elem;
 }
