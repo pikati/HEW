@@ -104,7 +104,6 @@ int WakkaManager::GetCenter() {
 void WakkaManager::Hit(int idx) {
 	m_shoot[idx] = false;
 	m_wakka[idx].ResetFrame();
-	m_destroyObstacleNum++;
 }
 
 bool WakkaManager::IsShoot(int i) {
@@ -277,4 +276,8 @@ D3DXVECTOR3 WakkaManager::GetPosition(int idx) {
 
 int WakkaManager::GetDestroyObstacleNum() {
 	return m_destroyObstacleNum;
+}
+
+void WakkaManager::DestroyObstacleCountUp() {
+	m_destroyObstacleNum++;
 }

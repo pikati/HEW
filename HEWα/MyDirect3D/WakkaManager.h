@@ -39,5 +39,6 @@ public:
 	D3DXMATRIX* GetMatrix(int idx);
 	D3DXVECTOR3 GetPosition(int idx);
 	int GetDestroyObstacleNum();
+	void DestroyObstacleCountUp();
 };
 

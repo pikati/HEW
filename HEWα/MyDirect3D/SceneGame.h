@@ -12,7 +12,7 @@
 
 #define WAKKA 2
 #define PLAYER 2
-#define STAGE 10//37
+#define STAGE 37
 
 class SceneGame : public BaseScene
 {
@@ -67,6 +67,8 @@ private:
 	void ColP2I();
 	//!プレイヤーとステージ
 	void ColP2S();
+
+	bool IsObstacleDestroy(OBST_TYPE type, ELEM elem);
 
 	template <class T>
 	D3DXMATRIX* GetMatrix(T& info, D3DXMATRIX& mat);

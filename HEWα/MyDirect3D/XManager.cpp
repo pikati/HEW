@@ -105,7 +105,7 @@ void XManager::Draw() {
 	}
 	if (m_bOBB)
 	{
-		m_COBBTree->Draw(5);
+		m_COBBTree->Draw(1);
 	}
 }
 
@@ -166,3 +166,4 @@ COBBTree& XManager::GetOBB() const{
 D3DXMATRIX* XManager::GetMatrix() {
 	return &m_mat;
 }
+

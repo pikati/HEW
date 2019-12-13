@@ -196,7 +196,7 @@ CoolTime& Player::GetCoolTime() {
 void Player::CheckCoolTime() {
 	if (m_coolTime.bCoolTime)
 	{
-		m_coolTime.coolTime--;
+		m_coolTime.coolTime = 0;
 		if (m_coolTime.coolTime <= 0)
 		{
 			m_coolTime.bCoolTime = false;
