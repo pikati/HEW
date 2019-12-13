@@ -42,8 +42,11 @@ void Tree::Update() {
 }
 
 void Tree::Draw() {
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->Draw();
+	if (m_bEnable)
+	{
+		m_pXmanager->SetTranslation(m_pos);
+		m_pXmanager->Draw();
+	}
 }
 
 void Tree::Finalize() {

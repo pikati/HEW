@@ -73,8 +73,9 @@ private:
 	void ColP2I();
 	//!プレイヤーとステージ
 	void ColP2S();
-	void CreatePitfalls(D3DXVECTOR3 pos, int n);
-	void CreateSandStorm(D3DXVECTOR3 pos, int n);
+
+	template <class T>
+	D3DXMATRIX* GetMatrix(T& info, D3DXMATRIX& mat);
 public:
 	~SceneGame();
 	//左上のx座標、左上のy座標、横幅、縦幅、テクスチャ（背景）の左上x座標、テクスチャの左上y座標、テクスチャの横幅、テクスチャの縦幅、テクスチャ

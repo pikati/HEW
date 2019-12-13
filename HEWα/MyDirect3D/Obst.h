@@ -43,4 +43,5 @@ public:
 	virtual D3DXMATRIX* GetMatrix() = 0;
 	virtual void	Reset() = 0;
 	virtual OBST_TYPE	GetElem() = 0;
+	virtual void	SetPlayerPos(D3DXVECTOR3 pos) = 0;
 };

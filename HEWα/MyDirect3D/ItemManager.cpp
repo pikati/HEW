@@ -24,7 +24,7 @@ void ItemManager::Update() {
 }
 
 void ItemManager::Draw() {
-	for (int i = 0; i < m_itemInfo.size(); i++)
+	for (int i = 0; i < (int)m_itemInfo.size(); i++)
 	{
 		m_item[m_itemInfo[i].type]->SetPosition(m_itemInfo[i].pos);
 		m_item[m_itemInfo[i].type]->SetRotation(m_itemInfo[i].rot);
@@ -51,7 +51,7 @@ void ItemManager::CreateItem(D3DXVECTOR3 pos, ITEM_TYPE type) {
 }
 
 int ItemManager::GetItemNum() {
-	return m_itemInfo.size();
+	return (int)m_itemInfo.size();
 }
 
 ItemInfo* ItemManager::GetItemInfo(int idx) {

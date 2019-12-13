@@ -12,6 +12,9 @@ private:
 	int			m_center;
 	bool		m_shoot[5];
 
+	//!è·äQï®ÇâÛÇµÇΩêî
+	int			m_destroyObstacleNum;
+
 	void ShotUpdate(int i);
 	void LerpUpdate(int i);
 	D3DXVECTOR3* Lerp(D3DXVECTOR3* out, D3DXVECTOR3* start, D3DXVECTOR3* end, float t);
@@ -35,5 +38,6 @@ public:
 	COBBTree& GetOBB(int idx) const;
 	D3DXMATRIX* GetMatrix(int idx);
 	D3DXVECTOR3 GetPosition(int idx);
+	int GetDestroyObstacleNum();
 };
 

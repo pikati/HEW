@@ -14,20 +14,20 @@ void XManager::Initialize() {
 	m_rotation = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
 	D3DXMatrixIdentity(&m_mat);
-	if (FAILED(D3DXCreateEffectFromFile(
-		m_d3dDevice,
-		"Effect00.fx",
-		NULL,
-		NULL,
-		D3DXSHADER_DEBUG,
-		NULL,
-		&g_pEffect,//ToCreator()‚Í‚â‚Î‚¢‚â‚Â()
-		NULL
-	)))
-	{
-		MessageBox(NULL, "‚¦‚Á‚Ó‚¥‚­‚Æ‚Ì“Ç‚Ýž‚Ý‚ÉŽ¸”s‚µ‚Ü‚µ‚½", NULL, MB_OK);
-		return ;
-	}
+	//if (FAILED(D3DXCreateEffectFromFile(
+	//	m_d3dDevice,
+	//	"Effect00.fx",
+	//	NULL,
+	//	NULL,
+	//	D3DXSHADER_DEBUG,
+	//	NULL,
+	//	&g_pEffect,//ToCreator()‚Í‚â‚Î‚¢‚â‚Â()
+	//	NULL
+	//)))
+	//{
+	//	MessageBox(NULL, "‚¦‚Á‚Ó‚¥‚­‚Æ‚Ì“Ç‚Ýž‚Ý‚ÉŽ¸”s‚µ‚Ü‚µ‚½", NULL, MB_OK);
+	//	return ;
+	//}
 }
 
 bool XManager::LoadXFile(const char* filePath, bool isCol) {
@@ -95,31 +95,18 @@ void XManager::Update() {
 	m_mat = matScale * matRotation * matTranslation;
 }
 
-void XManager::Draw() {
-	
-	D3DXMATRIX *mat;
-	mat = CameraMediator::GetCameraMatrix();
-	*mat = m_mat * *mat;
-	
+void XManager::Draw() {	
 	m_d3dDevice->SetTransform(D3DTS_WORLD, &m_mat);
-	g_pEffect->SetTechnique("BasicTec");
-	g_pEffect->SetMatrix("matWorldViewProj", mat);
-	g_pEffect->Begin(NULL, 0);
-	g_pEffect->BeginPass(0);
 	for (DWORD i = 0; i < m_numMaterials; i++)
 	{
-		{
-			g_pEffect->SetValue("Diffuse", (LPVOID)&m_pMaterials[i].Diffuse, 16);
-		}
-		g_pEffect->SetTexture("BasicTec", m_pTextures[i]);
+		m_d3dDevice->SetMaterial(&m_pMaterials[i]);
+		m_d3dDevice->SetTexture(0, m_pTextures[i]);
 		m_pMesh->DrawSubset(i);
 	}
-	/*if (m_bOBB)
+	if (m_bOBB)
 	{
-		m_COBBTree->Draw(2);
-	}*/
-	g_pEffect->EndPass();
-	g_pEffect->End();
+		m_COBBTree->Draw(5);
+	}
 }
 
 void XManager::Finalize() {

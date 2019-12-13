@@ -25,7 +25,7 @@ void ObstacleManager::Update() {
 }
 
 void ObstacleManager::Draw() {
-	for (int i = 0; i < m_obstacleInfo.size(); i++)
+	for (int i = 0; i < (int)m_obstacleInfo.size(); i++)
 	{
 		m_obstacle[m_obstacleInfo[i].type]->SetPosition(m_obstacleInfo[i].pos);
 		m_obstacle[m_obstacleInfo[i].type]->SetRotation(m_obstacleInfo[i].rot);
@@ -52,7 +52,7 @@ void ObstacleManager::CreateObstacle(D3DXVECTOR3 pos, OBST_TYPE type) {
 }
 
 int ObstacleManager::GetObstacleNum() {
-	return m_obstacleInfo.size();
+	return (int)m_obstacleInfo.size();
 }
 
 ObstacleInfo* ObstacleManager::GetObstacleInfo(int idx) {
@@ -73,4 +73,11 @@ COBBTree& ObstacleManager::GetOBB(OBST_TYPE type) const {
 
 void ObstacleManager::Hit(int idx) {
 	m_obstacleInfo.erase(m_obstacleInfo.begin() + idx);
+}
+
+void ObstacleManager::SetPlayerPosition(D3DXVECTOR3 pos) {
+	for (int i = 0; i < 5; i++)
+	{
+		m_obstacle[i]->SetPlayerPos(pos);
+	}
 }

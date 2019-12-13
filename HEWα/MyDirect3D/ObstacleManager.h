@@ -6,9 +6,6 @@
 #include "SandStorm.h"
 #include "Tree.h"
 
-//“¯‚ÉoŒ»‚Å‚«‚éáŠQ•¨‚Ì”
-#define OBSTACLE_NUM 20
-
 //áŠQ•¨‚Ì”
 #define OBSTACLE_KIND 5
 
@@ -44,5 +41,6 @@ public:
 	D3DXVECTOR3 GetObstacleRotation(int idx);
 	COBBTree& GetOBB(OBST_TYPE type) const;
 	void Hit(int idx);
+	void SetPlayerPosition(D3DXVECTOR3 pos);
 };
 

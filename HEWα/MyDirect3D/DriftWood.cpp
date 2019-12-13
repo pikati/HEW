@@ -34,7 +34,8 @@ void DriftWood::Update() {
 	{
 		m_bEnable = false;
 	}
-	else {
+	else 
+	{
 		if (!m_bHit)
 		{
 			m_bEnable = true;

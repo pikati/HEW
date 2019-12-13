@@ -27,6 +27,8 @@ static int count2 = 0;
 static bool b = false;
 
 /*xファイルの拡縮するときに法線がおかしくなることがあるのでデバイスのSetRenderStateでD3DRS_NOMALIZENORMALSみたいなことをする*/
+/*速度下がらないんご*/
+/*当たり判定おかしいんご位*/
 SceneGame::~SceneGame() {
 }
 
@@ -37,7 +39,7 @@ void SceneGame::Initialize() {
 	PlayerInitialize(0);
 	PlayerInitialize(1);
 	StageInitialize();
-	//ObstacleInitialize();
+	ObstacleInitialize();
 	CameraInitialize();
 	ItemInitialize();
 	m_d3dDevice = GetDevice();
@@ -49,7 +51,7 @@ void SceneGame::Update() {
 	PlayerUpdate(0);
 	PlayerUpdate(1);
 	WakkaUpdate();
-	//ObstacleUpdate();
+	ObstacleUpdate();
 	CollisionUpdate();
 	ItemUpdate();
 	if (m_goal->IsGoal(m_player->GetPlayerPosition())) {
@@ -59,10 +61,10 @@ void SceneGame::Update() {
 
 void SceneGame::Draw() {
 	PlayerDraw(0);
-	//ObstacleDraw(0);
+	ObstacleDraw(0);
 	ItemDraw(0);
 	PlayerDraw(1);
-	//ObstacleDraw(1);
+	ObstacleDraw(1);
 	ItemDraw(1);
 }
 
@@ -71,7 +73,7 @@ void SceneGame::Finalize() {
 	delete m_goal;
 	ItemFinalize();
 	CameraFinalize();
-	//ObstacleFinalize();
+	ObstacleFinalize();
 	StageFinalize();
 	PlayerFinalize(1);
 	PlayerFinalize(0);
@@ -196,8 +198,8 @@ void SceneGame::ObstacleInitialize() {
 	for (int i = 0; i < 5; i++)
 	{
 		for (int j = 0; j < 5; j++) {
-			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j), (OBST_TYPE)i);
-			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j), (OBST_TYPE)i);
+			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 15.0f * i + 3.0f * j + 5.0f), (OBST_TYPE)i);
+			//m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j + 10.0f), (OBST_TYPE)i);
 		}
 	}
 }
@@ -205,6 +207,8 @@ void SceneGame::ObstacleInitialize() {
 void SceneGame::ObstacleUpdate() {
 	m_obstacleManager[0].Update();
 	m_obstacleManager[1].Update();
+	m_obstacleManager[0].SetPlayerPosition(m_player[0].GetPlayerPosition());
+	m_obstacleManager[1].SetPlayerPosition(m_player[1].GetPlayerPosition());
 }
 
 void SceneGame::ObstacleDraw(int playerIdx) {
@@ -356,294 +360,136 @@ void SceneGame::Rendering(int a) {
 }
 
 void SceneGame::CollisionUpdate() {
-	//ColP2O();
-	//ColW2O();
+	ColP2O();
+	ColW2O();
 	ColP2I();
 	ColP2S();
 }
 
 void SceneGame::ColP2O() {
-	int obstacleNum = m_obstacleManager[0].GetObstacleNum();
-	/*プレイヤー1と障害物の当たり判定*/
-	for (int i = 0; i < obstacleNum; i++)
+	for (int idx = 0; idx < 2; idx++) 
 	{
-		ObstacleInfo* info = m_obstacleManager[0].GetObstacleInfo(i);
-		D3DXMATRIX mat;
-		D3DXMATRIXA16 matTranslation, matRotation, matScale;
-		D3DXMatrixIdentity(&mat);
-		D3DXMatrixIdentity(&matTranslation);
-		D3DXMatrixIdentity(&matRotation);
-		D3DXMatrixIdentity(&matScale);
-		D3DXMatrixTranslation(&matTranslation, info->pos.x, info->pos.y, info->pos.z);
-		D3DXMatrixRotationYawPitchRoll(&matRotation, info->rot.y, info->rot.x, info->rot.z);
-		D3DXMatrixScaling(&matScale, 0.2f, 0.2f, 0.2f);
-		mat = matScale * matRotation * matTranslation;
-		if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_obstacleManager[0].GetOBB(info->type), mat))
+		int obstacleNum = m_obstacleManager[idx].GetObstacleNum();
+		for (int i = 0; i < obstacleNum; i++)
 		{
-			m_obstacleManager[0].Hit(i);
-			m_player[0].Hit();
+			ObstacleInfo* info = m_obstacleManager[idx].GetObstacleInfo(i);
+			D3DXMATRIX mat;
+			D3DXMATRIXA16 matTranslation, matRotation, matScale;
+			GetMatrix(info, mat);
+			if (Collision::CheckCollision(m_player[idx].GetOBB(), *m_player[idx].GetMatrix(), m_obstacleManager[idx].GetOBB(info->type), mat))
+			{
+				m_obstacleManager[idx].Hit(i);
+				m_player[idx].Hit();
+				obstacleNum--;
+			}
 		}
 	}
-	
 }
 
 void SceneGame::ColW2O() {
-	/*わっかと初期障害物の当たり判定（絶対最適化できるゾ）*/
-	for (int i = 0; i < OBSTACLE_NUM; i++) 
+	for (int idx = 0; idx < 2; idx++)
 	{
-		if (m_pObstacle1[i] != nullptr) 
+		int obstacleNum = m_obstacleManager[idx].GetObstacleNum();
+		for (int i = 0; i < obstacleNum; i++)
 		{
-			if (m_pObstacle1[i]->IsEnable()) 
+			for (int wakka = 0; wakka < 5; wakka++)
 			{
-				for (int j = 0; j < 5; j++) 
+				if (m_wakka[idx].IsShoot(wakka))
 				{
-					if (m_wakka[0].IsShoot(j)) 
+					ObstacleInfo* info = m_obstacleManager[idx].GetObstacleInfo(i);
+					D3DXMATRIX mat;
+					GetMatrix(info, mat);
+					if (Collision::CheckCollision(m_wakka[idx].GetOBB(wakka), *m_wakka[idx].GetMatrix(wakka), m_obstacleManager[idx].GetOBB(info->type), mat))
 					{
-						if (Collision::CheckCollision(m_wakka[0].GetOBB(j), *m_wakka[0].GetMatrix(j), m_pObstacle1[i]->GetOBB(), *m_pObstacle1[i]->GetMatrix()))
+						m_wakka[0].Hit(wakka);
+						/*アイテム生成処理*/
+						if (m_wakka[idx].GetDestroyObstacleNum() % 3 == 0)
 						{
-							m_wakka[0].Hit(j);
-							if (m_pObstacle1[i]->GetElem() == DRIFTWOOD && m_wakka[0].GetElem(j) == FIRE)
-							{
-								m_pObstacle1[i]->Hit();
-							}
-							else if (m_pObstacle1[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0].GetElem(j) == WATER)
-							{
-								m_pObstacle1[i]->Hit();
-							}
-							else if (m_pObstacle1[i]->GetElem() == TREE && m_wakka[0].GetElem(j) == FIRE)
-							{
-								m_pObstacle1[i]->Hit();
-							}
-							else if (m_pObstacle1[i]->GetElem() == SANDSTORM && m_wakka[0].GetElem(j) == WATER)
-							{
-								m_pObstacle1[i]->Hit();
-							}
-							else if (m_pObstacle1[i]->GetElem() == PITFALL && m_wakka[0].GetElem(j) == SOIL)
-							{
-								m_pObstacle1[i]->Hit();
-							}
-							if (!m_player[0].GetCoolTime().bCoolTime)
-							{
-								if (m_wakka[0].GetElem(j) == SAND)
-								{
-									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreateSandStorm(pos, 0);
-								}
-								else if (m_wakka[0].GetElem(j) == SOIL)
-								{
-									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreatePitfalls(pos, 0);
-								}
-								m_player[0].StartCoolTime();
-							}
+							m_itemManager[idx].CreateItem(info->pos, (ITEM_TYPE)(rand() % 2));
 						}
-					}
-				}
-			}
-		}
-	}
-	for (int i = 0; i < OBSTACLE_NUM; i++) 
-	{
-		if (m_pObstacle2[i] != nullptr) 
-		{
-			if (m_pObstacle2[i]->IsEnable()) 
-			{
-				for (int j = 0; j < 5; j++) 
-				{
-					if (m_wakka[1].IsShoot(j)) 
-					{
-						if (Collision::CheckCollision(m_wakka[1].GetOBB(j), *m_wakka[1].GetMatrix(j), m_pObstacle2[i]->GetOBB(), *m_pObstacle2[i]->GetMatrix()))
-						{
-							m_wakka[1].Hit(j);
-							if (m_pObstacle2[i]->GetElem() == DRIFTWOOD && m_wakka[1].GetElem(j) == FIRE)
-							{
-								m_pObstacle2[i]->Hit();
-							}
-							else if (m_pObstacle2[i]->GetElem() == FIREDRIFTWOOD && m_wakka[1].GetElem(j) == WATER)
-							{
-								m_pObstacle2[i]->Hit();
-							}
-							else if (m_pObstacle2[i]->GetElem() == TREE && m_wakka[1].GetElem(j) == FIRE)
-							{
-								m_pObstacle2[i]->Hit();
-							}
-							else if (m_pObstacle2[i]->GetElem() == SANDSTORM && m_wakka[1].GetElem(j) == WATER)
-							{
-								m_pObstacle2[i]->Hit();
-							}
-							else if (m_pObstacle2[i]->GetElem() == PITFALL && m_wakka[1].GetElem(j) == SOIL)
-							{
-								m_pObstacle2[i]->Hit();
-							}
-							if (!m_player[1].GetCoolTime().bCoolTime)
-							{
-								if (m_wakka[1].GetElem(j) == SAND)
-								{
-									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreateSandStorm(pos, 1);
-								}
-								else if (m_wakka[1].GetElem(j) == SOIL)
-								{
-									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreatePitfalls(pos, 1);
-								}
-								m_player[1].StartCoolTime();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
 
-	/*わっかと生成された障害物の当たり判定（上に同じ）*/
-	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-	{
-		if (m_1.createdObst[i] != nullptr)
-		{
-			if (m_1.createdObst[i]->IsEnable())
-			{
-				for (int j = 0; j < 5; j++)
-				{
-					if (m_wakka[0].IsShoot(j))
-					{
-						if (Collision::CheckCollision(m_wakka[0].GetOBB(j), *m_wakka[0].GetMatrix(j), m_1.createdObst[i]->GetOBB(), *m_1.createdObst[i]->GetMatrix()))
+						/*障害物削除処理*/
+						if (info->type == DRIFTWOOD && m_wakka[idx].GetElem(wakka) == FIRE)
 						{
-							m_wakka[0].Hit(j);
-							if (m_1.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[0].GetElem(j) == FIRE)
-							{
-								m_1.createdObst[i]->Hit();
-							}
-							else if (m_1.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[0].GetElem(j) == WATER)
-							{
-								m_1.createdObst[i]->Hit();
-							}
-							else if (m_1.createdObst[i]->GetElem() == TREE && m_wakka[0].GetElem(j) == FIRE)
-							{
-								m_1.createdObst[i]->Hit();
-							}
-							else if (m_1.createdObst[i]->GetElem() == SANDSTORM && m_wakka[0].GetElem(j) == WATER)
-							{
-								m_1.createdObst[i]->Hit();
-							}
-							else if (m_1.createdObst[i]->GetElem() == PITFALL && m_wakka[0].GetElem(j) == SOIL)
-							{
-								m_1.createdObst[i]->Hit();
-							}
-							if (!m_player[0].GetCoolTime().bCoolTime)
-							{
-								if (m_wakka[0].GetElem(j) == SAND)
-								{
-									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreateSandStorm(pos, 0);
-								}
-								else if (m_wakka[0].GetElem(j) == SOIL)
-								{
-									D3DXVECTOR3 pos = m_wakka[0].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[0].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[1].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreatePitfalls(pos, 0);
-								}
-								m_player[0].StartCoolTime();
-							}
+							m_obstacleManager[idx].Hit(i);
 						}
+						else if (info->type == FIREDRIFTWOOD && m_wakka[idx].GetElem(wakka) == WATER)
+						{
+							m_obstacleManager[idx].Hit(i);
+						}
+						else if (info->type == TREE && m_wakka[idx].GetElem(wakka) == FIRE)
+						{
+							m_obstacleManager[idx].Hit(i);
+						}
+						else if (info->type == SANDSTORM && m_wakka[idx].GetElem(wakka) == WATER)
+						{
+							m_obstacleManager[idx].Hit(i);
+						}
+						else if (info->type == PITFALL && m_wakka[idx].GetElem(wakka) == SOIL)
+						{
+							m_obstacleManager[idx].Hit(i);
+						}
+						if (!m_player[idx].GetCoolTime().bCoolTime)
+						{
+							if (m_wakka[idx].GetElem(wakka) == SAND)
+							{
+								D3DXVECTOR3 pos = m_wakka[idx].GetPosition(wakka);
+								D3DXVECTOR3 pos1;
+								D3DXVECTOR3 pos2;
+								if (idx == 0)
+								{
+									pos1 = m_player[0].GetPlayerPosition();
+									pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									m_obstacleManager[1].CreateObstacle(pos, SANDSTORM);
+								}
+								else
+								{
+									pos1 = m_player[1].GetPlayerPosition();
+									pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									m_obstacleManager[0].CreateObstacle(pos, SANDSTORM);
+								}
+
+							}
+							else if (m_wakka[idx].GetElem(wakka) == SOIL)
+							{
+								D3DXVECTOR3 pos = m_wakka[idx].GetPosition(wakka);
+								D3DXVECTOR3 pos1;
+								D3DXVECTOR3 pos2;
+								if (idx == 0)
+								{
+									pos1 = m_player[1].GetPlayerPosition();
+									pos2 = m_player[0].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									m_obstacleManager[1].CreateObstacle(pos, PITFALL);
+								}
+								else
+								{
+									pos1 = m_player[0].GetPlayerPosition();
+									pos2 = m_player[1].GetPlayerPosition();
+									float pos3 = pos1.z - pos2.z;
+									pos.z -= pos3;
+									pos.z += 3.0f;
+									m_obstacleManager[0].CreateObstacle(pos, PITFALL);
+								}
+							}
+							m_player[idx].StartCoolTime();
+						}
+						obstacleNum--;
 					}
 				}
+				
 			}
 		}
 	}
-	for (int i = 0; i < CREATED_OBSTACLE_NUM; i++)
-	{
-		if (m_2.createdObst[i] != nullptr)
-		{
-			if (m_2.createdObst[i]->IsEnable())
-			{
-				for (int j = 0; j < 5; j++)
-				{
-					if (m_wakka[1].IsShoot(j))
-					{
-						if (Collision::CheckCollision(m_wakka[1].GetOBB(j), *m_wakka[1].GetMatrix(j), m_2.createdObst[i]->GetOBB(), *m_2.createdObst[i]->GetMatrix()))
-						{
-							m_wakka[1].Hit(j);
-							if (m_2.createdObst[i]->GetElem() == DRIFTWOOD && m_wakka[1].GetElem(j) == FIRE)
-							{
-								m_2.createdObst[i]->Hit();
-							}
-							else if (m_2.createdObst[i]->GetElem() == FIREDRIFTWOOD && m_wakka[1].GetElem(j) == WATER)
-							{
-								m_2.createdObst[i]->Hit();
-							}
-							else if (m_2.createdObst[i]->GetElem() == TREE && m_wakka[1].GetElem(j) == FIRE)
-							{
-								m_2.createdObst[i]->Hit();
-							}
-							else if (m_2.createdObst[i]->GetElem() == SANDSTORM && m_wakka[1].GetElem(j) == WATER)
-							{
-								m_2.createdObst[i]->Hit();
-							}
-							else if (m_2.createdObst[i]->GetElem() == PITFALL && m_wakka[1].GetElem(j) == SOIL)
-							{
-								m_2.createdObst[i]->Hit();
-							}
-							if (!m_player[1].GetCoolTime().bCoolTime)
-							{
-								if (m_wakka[1].GetElem(j) == SAND)
-								{
-									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									CreateSandStorm(pos, 1);
-								}
-								else if (m_wakka[1].GetElem(j) == SOIL)
-								{
-									D3DXVECTOR3 pos = m_wakka[1].GetPosition(j);
-									D3DXVECTOR3 pos1 = m_player[1].GetPlayerPosition();
-									D3DXVECTOR3 pos2 = m_player[0].GetPlayerPosition();
-									float pos3 = pos1.z - pos2.z;
-									pos.z -= pos3;
-									pos.z += 3.0f;
-									pos.z -= m_player[1].GetPlayerPosition().z - m_player[0].GetPlayerPosition().z;
-									CreatePitfalls(pos, 1);
-								}
-								m_player[1].StartCoolTime();
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+	
 }
 
 void SceneGame::ColP2S() {
@@ -699,6 +545,7 @@ void SceneGame::ColP2I() {
 			{
 				m_player[1].GetItemEffect(MERONPAN);
 			}
+			itemNum--;
 			m_itemManager[0].Hit(i);
 		}
 	}
@@ -707,7 +554,6 @@ void SceneGame::ColP2I() {
 	for (int i = 0; i < itemNum; i++)
 	{
 		ItemInfo* info = m_itemManager[1].GetItemInfo(i);
-		D3DXVECTOR3 rot = m_itemManager[1].GetItemRotation(i);
 		D3DXMATRIX mat;
 		D3DXMATRIXA16 matTranslation, matRotation, matScale;
 		D3DXMatrixIdentity(&mat);
@@ -729,49 +575,21 @@ void SceneGame::ColP2I() {
 				m_player[0].GetItemEffect(MERONPAN);
 			}
 			m_itemManager[1].Hit(i);
+			itemNum--;
 		}
 	}
 }
 
-void SceneGame::CreateSandStorm(D3DXVECTOR3 pos, int n) {
-	if (n == 0) 
-	{
-		if (m_2.sandStormCounter >= CREATED_OBSTACLE_NUM / 2) {
-			m_2.sandStormCounter = 0;
-		}
-		m_2.createdObst[m_2.sandStormCounter]->Reset();
-		m_2.createdObst[m_2.sandStormCounter]->SetPlayerPos(m_player[1].GetPlayerPosition());
-		m_2.createdObst[m_2.sandStormCounter++]->SetPosition(pos);
-
-	}
-	else 
-	{
-		if (m_1.sandStormCounter >= CREATED_OBSTACLE_NUM / 2) {
-			m_1.sandStormCounter = 0;
-		}
-		m_1.createdObst[m_1.sandStormCounter]->Reset();
-		m_1.createdObst[m_1.sandStormCounter]->SetPlayerPos(m_player[1].GetPlayerPosition());
-		m_1.createdObst[m_1.sandStormCounter++]->SetPosition(pos);
-	}
-}
-
-void SceneGame::CreatePitfalls(D3DXVECTOR3 pos, int n) {
-	if (n == 0)
-	{
-		if (m_2.pitFallCounter >= CREATED_OBSTACLE_NUM) {
-			m_2.pitFallCounter = 10;
-		}
-		m_2.createdObst[m_2.pitFallCounter]->Reset();
-		m_2.createdObst[m_2.pitFallCounter]->SetPlayerPos(m_player[0].GetPlayerPosition());
-		m_2.createdObst[m_2.pitFallCounter++]->SetPosition(pos);
-	}
-	else
-	{
-		if (m_1.pitFallCounter >= CREATED_OBSTACLE_NUM) {
-			m_1.pitFallCounter = 10;
-		}
-		m_1.createdObst[m_1.pitFallCounter]->Reset();
-		m_1.createdObst[m_1.pitFallCounter]->SetPlayerPos(m_player[0].GetPlayerPosition());
-		m_1.createdObst[m_1.pitFallCounter++]->SetPosition(pos);
-	}
+template <class T>
+D3DXMATRIX* SceneGame::GetMatrix(T& info, D3DXMATRIX& mat) {
+	D3DXMATRIXA16 matTranslation, matRotation, matScale;
+	D3DXMatrixIdentity(&mat);
+	D3DXMatrixIdentity(&matTranslation);
+	D3DXMatrixIdentity(&matRotation);
+	D3DXMatrixIdentity(&matScale);
+	D3DXMatrixTranslation(&matTranslation, info->pos.x, info->pos.y, info->pos.z);
+	D3DXMatrixRotationYawPitchRoll(&matRotation, info->rot.y, info->rot.x, info->rot.z);
+	D3DXMatrixScaling(&matScale, info->scale.x, info->scale.y, info->scale.z);
+	mat = matScale * matRotation * matTranslation;
+	return &mat;
 }

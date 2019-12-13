@@ -33,6 +33,7 @@ private:
 	float		m_playerVerocity;
 	bool		m_itemGet;
 	bool		m_hit;
+	//!減速フラグ
 	bool		m_deceleration;
 	/*ボタンをプレイヤー1とプレイヤー2で判別するための変数*/
 	int			m_num;

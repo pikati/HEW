@@ -24,6 +24,7 @@ void WakkaManager::Initialize() {
 	
 	m_playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_playerAngle = 0.0f;
+	m_destroyObstacleNum = 0;
 }
 
 void WakkaManager::Update() {
@@ -103,6 +104,7 @@ int WakkaManager::GetCenter() {
 void WakkaManager::Hit(int idx) {
 	m_shoot[idx] = false;
 	m_wakka[idx].ResetFrame();
+	m_destroyObstacleNum++;
 }
 
 bool WakkaManager::IsShoot(int i) {
@@ -271,4 +273,8 @@ D3DXMATRIX* WakkaManager::GetMatrix(int idx) {
 
 D3DXVECTOR3 WakkaManager::GetPosition(int idx) {
 	return m_wakka[idx].GetPosition();
+}
+
+int WakkaManager::GetDestroyObstacleNum() {
+	return m_destroyObstacleNum;
 }
