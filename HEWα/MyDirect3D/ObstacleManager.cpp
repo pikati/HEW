@@ -41,6 +41,10 @@ void ObstacleManager::Finalize() {
 	{
 		m_obstacle[i]->Finalize();
 	}
+	for (int i = OBSTACLE_KIND - 1; i >= 0; i--)
+	{
+		delete m_obstacle[i];
+	}
 }
 
 void ObstacleManager::CreateObstacle(ObstacleInfo info) {

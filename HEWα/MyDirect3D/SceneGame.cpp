@@ -27,7 +27,6 @@ static int count2 = 0;
 static bool b = false;
 
 /*xファイルの拡縮するときに法線がおかしくなることがあるのでデバイスのSetRenderStateでD3DRS_NOMALIZENORMALSみたいなことをする*/
-/*速度下がらないんご*/
 /*当たり判定おかしいんご位*/
 SceneGame::~SceneGame() {
 }
@@ -198,7 +197,7 @@ void SceneGame::ObstacleInitialize() {
 	for (int i = 0; i < 5; i++)
 	{
 		for (int j = 0; j < 5; j++) {
-			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 15.0f * i + 3.0f * j + 5.0f), (OBST_TYPE)i);
+			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 25.0f * i + 5.0f * j + 5.0f), (OBST_TYPE)i);
 			//m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 5 - 2.0f, 0.0f, 9.0f * i + 3.0f * j + 10.0f), (OBST_TYPE)i);
 		}
 	}
@@ -222,56 +221,35 @@ void SceneGame::ObstacleFinalize() {
 }
 
 void SceneGame::StageInitialize() {
-	m_stage = new Stage;
-	m_stageWall = new Stage;
-	//m_stageCurve = new Stage;
-	m_stage->Initialize(0);
-	m_stageWall->Initialize(1);
-	//m_stageCurve->Initialize(2);
+	m_stageManager = new StageManager;
+	m_stageManager->Initialize();
+
 	for (int i = 0; i < STAGE; i++)
 	{
-		m_stageInfo[i][0] = (D3DXVECTOR3(0.0f, -0.4f, i * 10.0f));
-		m_stageInfo[i][1] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_stageInfo[i][2] = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+		m_stageManager->CreateStage(D3DXVECTOR3(0.0f, -0.4f, i * 10.0f), STAGE_NORMAL);
 	}
-	for (int i = 0; i < STAGE * 2; i += 2)
+	for (int i = 0; i < STAGE * 2; i++)
 	{
-		m_stageWallInfo[i][0] = D3DXVECTOR3(1.25f, -0.4f, i * 5.0f);
-		m_stageWallInfo[i][1] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_stageWallInfo[i][2] = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-		m_stageWallInfo[i + 1][0] = D3DXVECTOR3(-1.25f, -0.4f, i * 5.0f);
-		m_stageWallInfo[i + 1][1] = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-		m_stageWallInfo[i + 1][2] = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+		m_stageManager->CreateStage(D3DXVECTOR3(1.25f, -0.4f, i * 5.0f), STAGE_WALL);
+		m_stageManager->CreateStage(D3DXVECTOR3(-1.25f, -0.4f, i * 5.0f), STAGE_WALL);
 	}
 }
 
 void SceneGame::StageDraw(D3DXVECTOR3 pos) {
 	for (int i = 0; i < STAGE; i++) {
-		if (fabs(pos.y - m_stageInfo[i][0].y) < 50.0f || fabs(pos.z - m_stageInfo[i][0].z) < 50.0f || fabs(pos.x - m_stageInfo[i][0].x) < 50.0f)
+		StageInfo* info = m_stageManager->GetStageInfo(i);
+		if (fabs(pos.y - info->pos.y) < 50.0f && fabs(pos.z - info->pos.z) < 50.0f && fabs(pos.x - info->pos.x) < 50.0f)
 		{
-			m_stage->SetPosition(m_stageInfo[i][0]);
-			m_stage->Update();
-			m_stage->Draw();
-		}
-	}
-	for (int i = 0; i < STAGE * 2; i++) {
-		if (fabs(pos.y - m_stageWallInfo[i][0].y) < 50.0f || fabs(pos.z - m_stageWallInfo[i][0].z) < 50.0f || fabs(pos.x - m_stageWallInfo[i][0].x) < 50.0f)
-		{
-			m_stageWall->SetPosition(m_stageWallInfo[i][0]);
-			m_stageWall->Update();
-			m_stageWall->Draw();
+			m_stageManager->Draw();
 		}
 	}
 }
 
 void SceneGame::StageFinalize() {
-	//m_stageCurve->Finalize();
-	m_stageWall->Finalize();
-	m_stage->Finalize();
-	//delete m_stageCurve;
-	delete m_stageWall;
-	delete m_stage;
+	m_stageManager->Finalize();
+	delete m_stageManager;
 }
+
 
 void SceneGame::CameraInitialize() {
 	m_camera = new Cameran[2];
@@ -493,31 +471,31 @@ void SceneGame::ColW2O() {
 }
 
 void SceneGame::ColP2S() {
-	D3DXVECTOR3 pos = m_player[0].GetPlayerPosition();
-	/*当たり判定必要なステージオブジェクトの数だけ繰り返すのだ*/
-	for (int i = 0; i < STAGE * 2; i++) {
-		/*当たり判定とる範囲はできる限り小さくしてみた！ キラッとプリ☆チャンはいいぞ*/
-		/*if (fabs(pos.y - m_stageInfo[i][0].y) < 2.0f && fabs(pos.z - m_stageInfo[i][0].z) < 2.0f && fabs(pos.x - m_stageInfo[i][0].x) < 2.0f)
-		{*/
-			D3DXMATRIX mat;
-			D3DXMATRIXA16 matTranslation, matRotation, matScale;
-			D3DXMatrixIdentity(&mat);
-			D3DXMatrixIdentity(&matTranslation);
-			D3DXMatrixIdentity(&matRotation);
-			D3DXMatrixIdentity(&matScale);
-			D3DXMatrixTranslation(&matTranslation, m_stageWallInfo[i][0].x, m_stageWallInfo[i][0].y, m_stageWallInfo[i][0].z);
-			D3DXMatrixRotationYawPitchRoll(&matRotation, m_stageWallInfo[i][1].y, m_stageWallInfo[i][1].x, m_stageWallInfo[i][1].z);
-			D3DXMatrixScaling(&matScale, m_stageWallInfo[i][2].x, m_stageWallInfo[i][2].y, m_stageWallInfo[i][2].z);
-			mat = matScale * matRotation * matTranslation;
-			if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_stageWall->GetOBB(), mat))
-			{
-				MyOutputDebugString("ｱﾀｯﾀﾖ!\n");
-				m_player[0].Hit();
-				m_player[0].HitWall();
-			}
-		/*}*/
-		
-	}
+	//D3DXVECTOR3 pos = m_player[0].GetPlayerPosition();
+	///*当たり判定必要なステージオブジェクトの数だけ繰り返すのだ*/
+	//for (int i = 0; i < STAGE * 2; i++) {
+	//	/*当たり判定とる範囲はできる限り小さくしてみた！ キラッとプリ☆チャンはいいぞ*/
+	//	/*if (fabs(pos.y - m_stageInfo[i][0].y) < 2.0f && fabs(pos.z - m_stageInfo[i][0].z) < 2.0f && fabs(pos.x - m_stageInfo[i][0].x) < 2.0f)
+	//	{*/
+	//		D3DXMATRIX mat;
+	//		D3DXMATRIXA16 matTranslation, matRotation, matScale;
+	//		D3DXMatrixIdentity(&mat);
+	//		D3DXMatrixIdentity(&matTranslation);
+	//		D3DXMatrixIdentity(&matRotation);
+	//		D3DXMatrixIdentity(&matScale);
+	//		D3DXMatrixTranslation(&matTranslation, m_stageWallInfo[i][0].x, m_stageWallInfo[i][0].y, m_stageWallInfo[i][0].z);
+	//		D3DXMatrixRotationYawPitchRoll(&matRotation, m_stageWallInfo[i][1].y, m_stageWallInfo[i][1].x, m_stageWallInfo[i][1].z);
+	//		D3DXMatrixScaling(&matScale, m_stageWallInfo[i][2].x, m_stageWallInfo[i][2].y, m_stageWallInfo[i][2].z);
+	//		mat = matScale * matRotation * matTranslation;
+	//		if (Collision::CheckCollision(m_player[0].GetOBB(), *m_player[0].GetMatrix(), m_stageWall->GetOBB(), mat))
+	//		{
+	//			MyOutputDebugString("ｱﾀｯﾀﾖ!\n");
+	//			m_player[0].Hit();
+	//			m_player[0].HitWall();
+	//		}
+	//	/*}*/
+	//	
+	//}
 }
 
 void SceneGame::ColP2I() {

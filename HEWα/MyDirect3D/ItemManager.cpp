@@ -40,6 +40,8 @@ void ItemManager::Finalize() {
 	{
 		m_item[i]->Finalize();
 	}
+	delete m_item[1];
+	delete m_item[0];
 }
 
 void ItemManager::CreateItem(ItemInfo info) {

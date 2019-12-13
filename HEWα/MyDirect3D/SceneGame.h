@@ -3,7 +3,7 @@
 #include "WakkaManager.h"
 #include "XManager.h"
 #include "Player.h"
-#include "Stage.h"
+#include "StageManager.h"
 #include "Obst.h"
 #include "Goal.h"
 #include "Cameran.h"
@@ -20,17 +20,11 @@ private:
 	Player* m_player;
 	WakkaManager* m_wakka;
 	ObstacleManager* m_obstacleManager;
-	Stage* m_stage;
-	Stage* m_stageWall;
-	Stage* m_stageCurve;
+	StageManager* m_stageManager;
 	Cameran* m_camera;
 	ItemManager* m_itemManager;
 	LPDIRECT3DDEVICE9 m_d3dDevice;
 	Goal*	m_goal;
-
-	D3DXVECTOR3 m_stageInfo[STAGE][3];
-	D3DXVECTOR3 m_stageWallInfo[STAGE * 2][3];
-	D3DXVECTOR3 m_stageCurveInfo[STAGE][3];
 
 	void PlayerInitialize(int j);
 	void PlayerUpdate(int j);
@@ -78,7 +72,6 @@ private:
 	D3DXMATRIX* GetMatrix(T& info, D3DXMATRIX& mat);
 public:
 	~SceneGame();
-	//左上のx座標、左上のy座標、横幅、縦幅、テクスチャ（背景）の左上x座標、テクスチャの左上y座標、テクスチャの横幅、テクスチャの縦幅、テクスチャ
 	void Initialize();
 	void Update();
 	void Draw();
