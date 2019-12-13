@@ -12,7 +12,7 @@
 
 #define WAKKA 2
 #define PLAYER 2
-#define STAGE 37
+#define STAGE 50
 
 class SceneGame : public BaseScene
 {

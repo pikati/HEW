@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+Ôªø#define _CRT_SECURE_NO_WARNINGS
 #include "SceneGame.h"
 #include "Input.h"
 #include "Joycon.h"
@@ -26,8 +26,8 @@ static bool a = false;
 static int count2 = 0;
 static bool b = false;
 
-/*xÉtÉ@ÉCÉãÇÃägèkÇ∑ÇÈÇ∆Ç´Ç…ñ@ê¸Ç™Ç®Ç©ÇµÇ≠Ç»ÇÈÇ±Ç∆Ç™Ç†ÇÈÇÃÇ≈ÉfÉoÉCÉXÇÃSetRenderStateÇ≈D3DRS_NOMALIZENORMALSÇ›ÇΩÇ¢Ç»Ç±Ç∆ÇÇ∑ÇÈ*/
-/*ìñÇΩÇËîªíËÇ®Ç©ÇµÇ¢ÇÒÇ≤à */
+/*x„Éï„Ç°„Ç§„É´„ÅÆÊã°Á∏Æ„Åô„Çã„Å®„Åç„Å´Ê≥ïÁ∑ö„Åå„Åä„Åã„Åó„Åè„Å™„Çã„Åì„Å®„Åå„ÅÇ„Çã„ÅÆ„Åß„Éá„Éê„Ç§„Çπ„ÅÆSetRenderState„ÅßD3DRS_NOMALIZENORMALS„Åø„Åü„ÅÑ„Å™„Åì„Å®„Çí„Åô„Çã*/
+/*ÂΩì„Åü„ÇäÂà§ÂÆö„Åä„Åã„Åó„ÅÑ„Çì„Åî‰Ωç*/
 SceneGame::~SceneGame() {
 }
 
@@ -54,7 +54,7 @@ void SceneGame::Update() {
 	CollisionUpdate();
 	ItemUpdate();
 	if (m_goal->IsGoal(m_player->GetPlayerPosition())) {
-		MyOutputDebugString("ÉSÅ[ÉãÉVÉ^ÉàÅI\n");
+		MyOutputDebugString("„Ç¥„Éº„É´„Ç∑„Çø„É®ÔºÅ\n");
 	}
 }
 
@@ -194,11 +194,12 @@ void SceneGame::ObstacleInitialize() {
 	m_obstacleManager = new ObstacleManager[2];
 	m_obstacleManager[0].Initialize();
 	m_obstacleManager[1].Initialize();
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 15; i++)
 	{
+		/*‰øÆÊ≠£ÁÆáÊâÄ ÊµÅÊú®Âêõ„Åå„Ç¢„Ç§„ÉÜ„É†Âá∫„Çã„Å®„Åç„Å´„Åó„ÅãÊ∂à„Åà„Å¶„Åè„Çå„Å™„ÅÑ*/
 		for (int j = 0; j < 5; j++) {
-			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.2f - 2.0f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 5));
-			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.2f - 2.0f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 5));
+			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 4));
+			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 4));
 		}
 	}
 }
@@ -221,6 +222,39 @@ void SceneGame::ObstacleFinalize() {
 }
 
 void SceneGame::StageInitialize() {
+	/*m_stageManager = new StageManager;
+	m_stageManager->Initialize();
+	StageInfo info(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), STAGE_NORMAL);
+	for (int i = 0; i < STAGE / 2; i++)
+	{
+		info.pos = D3DXVECTOR3(0.0f, -0.4f, i * 10.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.rot = D3DXVECTOR3(0.0f, 90.0f * D3DX_PI / 180.0f, 0.0f);
+	for (int i = 0; i < STAGE / 2; i++)
+	{
+		info.pos = D3DXVECTOR3(i * 10.0f, -0.4f, STAGE * 10.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.type = STAGE_WALL;
+	info.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < STAGE; i++)
+	{
+		info.pos = D3DXVECTOR3(2.0f, 0.4f, i * 5.0f);
+		m_stageManager->CreateStage(info);
+		info.pos = D3DXVECTOR3(-2.0f, 0.4f, i * 5.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.rot = D3DXVECTOR3(0.0f, 90.0f * D3DX_PI / 180.0f, 0.0f);
+	m_stageManager->CreateStage(D3DXVECTOR3(2.5f, 0.4f, 50.0f + 2.0f), STAGE_WALL);
+	for (int i = 0; i < STAGE; i++)
+	{
+		info.pos = D3DXVECTOR3((i + 1) * 5.0f + 2.5f, 0.4f, 50.0f + 2.0f);
+		
+		m_stageManager->CreateStage(info);
+		info.pos = D3DXVECTOR3((i + 1) * 5.0f + 2.5f, 0.4f, i * 50.0f - 2.0f);
+		m_stageManager->CreateStage(info);
+	}*/
 	m_stageManager = new StageManager;
 	m_stageManager->Initialize();
 
@@ -305,14 +339,14 @@ void SceneGame::Rendering(int a) {
 		m_d3dDevice->SetViewport(&viwePort);
 	}
 	m_d3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(255, 225, 35), 1.0f, 0);
-	// ÉvÉçÉWÉFÉNÉVÉáÉìÉgÉâÉìÉXÉtÉHÅ[ÉÄÅiéÀâeïœä∑Åj
+	// „Éó„É≠„Ç∏„Çß„ÇØ„Ç∑„Éß„É≥„Éà„É©„É≥„Çπ„Éï„Ç©„Éº„É†ÔºàÂ∞ÑÂΩ±Â§âÊèõÔºâ
 	D3DXMATRIXA16 matProj;
 	D3DXMatrixPerspectiveFovLH(&matProj, D3DX_PI / 4, 1.0f, 1.0f, 100.0f);
 	m_d3dDevice->SetTransform(D3DTS_PROJECTION, &matProj);
 
 	CameraUpdate(a);
 	
-	// ÉâÉCÉgÇÇ†ÇƒÇÈ îíêFÇ≈ãæñ îΩéÀÇ†ÇËÇ…ê›íË
+	// „É©„Ç§„Éà„Çí„ÅÇ„Å¶„Çã ÁôΩËâ≤„ÅßÈè°Èù¢ÂèçÂ∞Ñ„ÅÇ„Çä„Å´Ë®≠ÂÆö
 	D3DXVECTOR3 vecDirection(1, -1, -1);
 	D3DLIGHT9 light;
 	ZeroMemory(&light, sizeof(D3DLIGHT9));
@@ -372,11 +406,11 @@ void SceneGame::ColW2O() {
 					if (Collision::CheckCollision(m_wakka[idx].GetOBB(wakka), *m_wakka[idx].GetMatrix(wakka), m_obstacleManager[idx].GetOBB(info->type), mat))
 					{
 						m_wakka[idx].Hit(wakka);
-						/*è·äQï®çÌèúèàóù*/
+						/*ÈöúÂÆ≥Áâ©ÂâäÈô§Âá¶ÁêÜ*/
 						if (IsObstacleDestroy(info->type, m_wakka[idx].GetElem(wakka)))
 						{
 							m_wakka[idx].DestroyObstacleCountUp();
-							/*ÉAÉCÉeÉÄê∂ê¨èàóù*/
+							/*„Ç¢„Ç§„ÉÜ„É†ÁîüÊàêÂá¶ÁêÜ*/
 							if (m_wakka[idx].GetDestroyObstacleNum() % 3 == 0)
 							{
 								m_itemManager[idx].CreateItem(info->pos, (ITEM_TYPE)(rand() % 2));
