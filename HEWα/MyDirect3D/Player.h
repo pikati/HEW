@@ -8,6 +8,7 @@
 #define ROTATE 0.04f
 #define MAX_SPEED 10.0f
 #define MIN_SPEED 5.0f
+#define CURVE_ANGLE_MAX 0.52f
 
 enum DIR {
 	RIGHT,
@@ -29,8 +30,12 @@ private:
 	XManager	*m_bloom;
 	D3DXVECTOR3 m_playerPos;
 	D3DXVECTOR3 m_prePlayerPos;
+	D3DXVECTOR3 m_flowPos;
 	D3DXVECTOR3 m_bloomPos;
 	float		m_playerVerocity;
+	float		m_flowAngleX;
+	float		m_flowAngleY;
+	float		m_curveAngle;
 	bool		m_itemGet;
 	bool		m_hit;
 	//!Œ¸‘¬ƒtƒ‰ƒO
@@ -46,6 +51,7 @@ private:
 
 	void		MoveForward();
 	void		MoveSide();
+	void		FlowAnimation();
 	void		CheckCoolTime();
 	void		UpdateEffect();
 public:
@@ -67,5 +73,6 @@ public:
 	void CalcDirection();
 	float GetPlayerAngle();
 	void GetItemEffect(ITEM_TYPE type);
+	D3DXVECTOR3 GetPlayerFlow();
 };
 

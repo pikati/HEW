@@ -51,6 +51,10 @@ void Player::Initialize(int i) {
 	m_maxSpeed = MAX_SPEED;
 	m_minSpeed = MIN_SPEED;
 
+	m_flowAngleX = 0;
+	m_flowAngleY = 0;
+	m_curveAngle = 0;
+
 	m_effectTime = 0;
 
 	Camera_Initialize();
@@ -64,17 +68,17 @@ void Player::Update() {
 	UpdateEffect();
 	MoveSide();
 	MoveForward();
+	FlowAnimation();
 
 	m_xfile_Player->Update();
 	m_bloom->Update();
-	m_xfile_Player->SetTranslation(m_playerPos);
+	m_xfile_Player->SetTranslation(m_playerPos.x + m_flowPos.x, m_playerPos.y + m_flowPos.y, m_playerPos.z + m_flowPos.z);
 	m_xfile_Player->SetRotationY(m_angle + 90.0f * (D3DX_PI / 180.0f));
-	m_bloom->SetTranslation(m_bloomPos);
+	m_xfile_Player->SetRotationZ(m_curveAngle);
+	m_bloom->SetTranslation(m_bloomPos.x + m_flowPos.x, m_bloomPos.y + m_flowPos.y, m_bloomPos.z + m_flowPos.z);
 	m_bloom->SetRotationY(m_angle - 90.0f * (D3DX_PI / 180.0f));
+	m_bloom->SetRotationZ(m_curveAngle);
 	CheckCoolTime();
-	//CalcDirection();
-	//MyOutputDebugString("x:%f y:%f z:%f\n", m_playerPos.x, m_playerPos.y, m_playerPos.z);
-	//MyOutputDebugString("angle:%f\n", m_angle);
 }
 
 void Player::Draw() {
@@ -129,21 +133,77 @@ void Player::MoveSide() {
 		if (Input::GetKey(DIK_D) || g_diJoyState2[0] & BUTTON_RIGHT)
 		{
 			m_angle += ROTATE;
+			m_curveAngle += ROTATE / 2.0f;
+			if (m_curveAngle > CURVE_ANGLE_MAX)
+			{
+				m_curveAngle = CURVE_ANGLE_MAX;
+			}
+			return;
 		}
 		else if (Input::GetKey(DIK_A) || g_diJoyState2[0] & BUTTON_LEFT)
 		{
 			m_angle += -ROTATE;
+			m_curveAngle += -ROTATE / 2.0f;
+			if (m_curveAngle < -CURVE_ANGLE_MAX)
+			{
+				m_curveAngle = -CURVE_ANGLE_MAX;
+			}
+			return;
 		}
 	}
 	else {
 		if (Input::GetKey(DIK_L) || g_diJoyState2[2] & BUTTON_RIGHT)
 		{
 			m_angle += ROTATE;
+			m_curveAngle += ROTATE / 2.0f;
+			if (m_curveAngle > CURVE_ANGLE_MAX)
+			{
+				m_curveAngle = CURVE_ANGLE_MAX;
+			}
+			return;
 		}
 		else if (Input::GetKey(DIK_J) || g_diJoyState2[2] & BUTTON_LEFT)
 		{
 			m_angle += -ROTATE;
+			m_curveAngle += -ROTATE / 2.0f;
+			if (m_curveAngle < -CURVE_ANGLE_MAX)
+			{
+				m_curveAngle = -CURVE_ANGLE_MAX;
+			}
+			return;
 		}
+	}
+	if (m_curveAngle > 0)
+	{
+		m_curveAngle += -ROTATE;
+		if (m_curveAngle < 0)
+		{
+			m_curveAngle = 0;
+		}
+	}
+	else if (m_curveAngle < 0)
+	{
+		m_curveAngle += ROTATE;
+		if (m_curveAngle > 0)
+		{
+			m_curveAngle = 0;
+		}
+	}
+}
+
+void Player::FlowAnimation() {
+	m_flowPos.x = cosf(m_flowAngleX) * 0.01f;
+	m_flowPos.y = sinf(m_flowAngleY) * 0.01f;
+	m_flowPos.z = 0;
+	m_flowAngleX += rand() % 10 * 0.02f;
+	m_flowAngleY += rand() % 10 * 0.02f;
+	if (m_flowAngleX > 2 * D3DX_PI)
+	{
+		m_flowAngleX = 0;
+	}
+	if (m_flowAngleY > 2 * D3DX_PI)
+	{
+		m_flowAngleY = 0;
 	}
 }
 
@@ -262,4 +322,8 @@ void Player::UpdateEffect() {
 		m_maxSpeed = MAX_SPEED;
 		m_minSpeed = MIN_SPEED;
 	}
+}
+
+D3DXVECTOR3 Player::GetPlayerFlow() {
+	return m_flowPos;
 }

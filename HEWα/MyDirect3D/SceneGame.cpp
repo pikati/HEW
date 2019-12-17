@@ -134,7 +134,7 @@ void SceneGame::PlayerUpdate(int j) {
 		if (Input::TriggerKey(DIK_O)|| g_diJoyState2[3] & BUTTON_R) {
 			if (!b)
 			{
-				m_wakka[j].Change(1);
+				m_wakka[j].Change(0);
 				b = true;
 			}
 		}
@@ -180,6 +180,7 @@ void SceneGame::WakkaUpdate() {
 	{
 		m_wakka[i].SetPlayerPosition(m_player[i].GetPlayerPosition());
 		m_wakka[i].SetPlayerAngle(m_player[i].GetPlayerAngle());
+		m_wakka[i].SetPlayerFlow(m_player[i].GetPlayerFlow());
 		m_wakka[i].Update();
 	}
 }
@@ -198,8 +199,8 @@ void SceneGame::ObstacleInitialize() {
 	{
 		/*修正箇所 流木君がアイテム出るときにしか消えてくれない*/
 		for (int j = 0; j < 5; j++) {
-			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 4));
-			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 4));
+			m_obstacleManager[0].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 5));
+			m_obstacleManager[1].CreateObstacle(D3DXVECTOR3(rand() % 10 * 0.15f - 1.5f, 0.0f, 50.0f * i + 10.0f * j + 5.0f), (OBST_TYPE)(rand() % 5));
 		}
 	}
 }
@@ -409,13 +410,13 @@ void SceneGame::ColW2O() {
 						/*障害物削除処理*/
 						if (IsObstacleDestroy(info->type, m_wakka[idx].GetElem(wakka)))
 						{
+							m_obstacleManager[idx].Hit(i);
 							m_wakka[idx].DestroyObstacleCountUp();
 							/*アイテム生成処理*/
 							if (m_wakka[idx].GetDestroyObstacleNum() % 3 == 0)
 							{
-								m_itemManager[idx].CreateItem(info->pos, (ITEM_TYPE)(rand() % 2));
+								m_itemManager[idx].CreateItem(m_wakka[idx].GetPosition(wakka), (ITEM_TYPE)(rand() % 2));
 							}
-							m_obstacleManager[idx].Hit(i);
 							obstacleNum--;
 						}
 						if (!m_player[idx].GetCoolTime().bCoolTime)

@@ -8,6 +8,7 @@ class WakkaManager
 private:
 	Wakka*		m_wakka;
 	D3DXVECTOR3 m_playerPos;
+	D3DXVECTOR3 m_playerFlowPos;
 	float		m_playerAngle;
 	int			m_center;
 	bool		m_shoot[5];
@@ -40,5 +41,6 @@ public:
 	D3DXVECTOR3 GetPosition(int idx);
 	int GetDestroyObstacleNum();
 	void DestroyObstacleCountUp();
+	void SetPlayerFlow(D3DXVECTOR3 pos);
 };
 
