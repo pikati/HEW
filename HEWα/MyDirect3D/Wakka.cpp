@@ -15,7 +15,7 @@ void Wakka::Initialize(ELEM elem) {
 	m_elem = elem;
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	m_playerPos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_model = new XManager;
+	m_model = new Fbx;
 	m_model->Initialize();
 	DecidePosition(0);
 	SetElem();
@@ -160,19 +160,19 @@ void Wakka::SetElem() {
 	switch (m_elem)
 	{
 	case FIRE:
-		m_model->LoadXFile("Models/Red.x", true);
+		m_model->Load("Models/FBX/Red.fbx", true);
 		break;
 	case WATER:
-		m_model->LoadXFile("Models/Blue.x", true);
+		m_model->Load("Models/FBX/Blue.fbx", true);
 		break;
 	case SAND:
-		m_model->LoadXFile("Models/Yellow.x", true);
+		m_model->Load("Models/FBX/Yellow.fbx", true);
 		break;
 	case SOIL:
-		m_model->LoadXFile("Models/Tuchi.x", true);
+		m_model->Load("Models/FBX/Tuchi.fbx", true);
 		break;
 	case WOOD:
-		m_model->LoadXFile("Models/Green.x", true);
+		m_model->Load("Models/FBX/Green.fbx", true);
 		break;
 	default:
 		break;
@@ -219,17 +219,17 @@ ELEM Wakka::GetElem() {
 	return m_elem;
 }
 
-//OBB* Wakka::GetOBB() {
-//	return m_model->GetOBB();
-//}
-
-COBBTree& Wakka::GetOBB() const {
+OBB& Wakka::GetOBB() {
 	return m_model->GetOBB();
 }
 
-D3DXMATRIX* Wakka::GetMatrix() {
-	return m_model->GetMatrix();
-}
+//COBBTree& Wakka::GetOBB() const {
+//	return m_model->GetOBB();
+//}
+//
+//D3DXMATRIX* Wakka::GetMatrix() {
+//	return m_model->GetMatrix();
+//}
 
 bool Wakka::MoveForward() {
 	m_pos = D3DXVECTOR3(m_shotPos.x - cosf(m_shotAngle) * (0.25f * ++m_frame), m_shotPos.y, m_shotPos.z + sinf(m_shotAngle) * (0.25f * ++m_frame));

@@ -14,11 +14,11 @@ Fire::~Fire()
 void Fire::Initialize()
 {
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_pXmanager = new XManager;
-	m_pXmanager->Initialize();
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->LoadXFile("Models/Obst/obstacleFire.x", true);
-	m_pXmanager->SetScaling(1.0f);
+	m_obst = new Fbx;
+	m_obst->Initialize();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Load("Models/FBX/obstacleFire.fbx", false);
+	m_obst->SetScaling(1.0f);
 	m_bEnable = false;
 	m_bHit = false;
 	m_elem = FIREDRIFTWOOD;
@@ -33,20 +33,20 @@ void Fire::Update() {
 		if (!m_bHit)
 		{
 			m_bEnable = true;
-			m_pXmanager->SetTranslation(m_pos);
-			m_pXmanager->Update();
+			m_obst->SetTranslation(m_pos);
+			m_obst->Update();
 		}
 	}
 }
 
 void Fire::Draw() {
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->Draw();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Draw();
 }
 
 void Fire::Finalize() {
-	m_pXmanager->Finalize();
-	delete m_pXmanager;
+	m_obst->Finalize();
+	delete m_obst;
 }
 
 D3DXVECTOR3 Fire::GetPosition() {
@@ -81,10 +81,10 @@ float* Fire::CreateRondam(float* random) {
 void Fire::SetPlayerPos(D3DXVECTOR3 pos) {
 	m_playerPos = pos;
 }
-//
-//OBB* Fire::GetOBB() {
-//	return m_pXmanager->GetOBB();
-//}
+
+OBB& Fire::GetOBB()const {
+	return m_obst->GetOBB();
+}
 
 void Fire::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
@@ -98,13 +98,13 @@ void Fire::SetScale(D3DXVECTOR3 scale) {
 	m_scale = scale;
 }
 
-COBBTree& Fire::GetOBB() const {
-	return m_pXmanager->GetOBB();
-}
-
-D3DXMATRIX* Fire::GetMatrix() {
-	return m_pXmanager->GetMatrix();
-}
+//COBBTree& Fire::GetOBB() const {
+//	return m_obst->GetOBB();
+//}
+//
+//D3DXMATRIX* Fire::GetMatrix() {
+//	return m_obst->GetMatrix();
+//}
 
 void Fire::Reset() {
 	m_bEnable = false;

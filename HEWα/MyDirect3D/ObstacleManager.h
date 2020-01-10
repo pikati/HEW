@@ -39,7 +39,8 @@ public:
 	ObstacleInfo*	GetObstacleInfo(int idx);
 	D3DXVECTOR3 GetObstaclePosition(int idx);
 	D3DXVECTOR3 GetObstacleRotation(int idx);
-	COBBTree& GetOBB(OBST_TYPE type) const;
+	//COBBTree& GetOBB(OBST_TYPE type) const;
+	OBB& GetOBB(OBST_TYPE type)const;
 	void Hit(int idx);
 	void SetPlayerPosition(D3DXVECTOR3 pos);
 };

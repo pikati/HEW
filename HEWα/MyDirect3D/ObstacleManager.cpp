@@ -71,7 +71,11 @@ D3DXVECTOR3 ObstacleManager::GetObstacleRotation(int idx) {
 	return m_obstacleInfo[idx].rot;
 }
 
-COBBTree& ObstacleManager::GetOBB(OBST_TYPE type) const {
+//COBBTree& ObstacleManager::GetOBB(OBST_TYPE type) const {
+//	return m_obstacle[type]->GetOBB();
+//}
+
+OBB& ObstacleManager::GetOBB(OBST_TYPE type)const {
 	return m_obstacle[type]->GetOBB();
 }
 

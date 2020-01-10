@@ -14,25 +14,19 @@ Player::~Player() {
 
 //半径0.125
 void Player::Initialize(int i) {
-	m_xfile_Player = new XManager;
-	m_xfile_Player->Initialize();
+	
+	/*読み込みたいファイルを引数に指定します*/
+	
+	m_player = new Fbx;
+	m_player->Initialize();
+	m_player->Load("Models/test/kaniko5.fbx", false);
+	m_player->SetTranslation(D3DXVECTOR3(0.0, 0.25f, 0.0f));
+	m_player->SetScaling(0.05f);
+	m_playerPos = D3DXVECTOR3(0.0f, 0.25f, 0.0f);
+	
 	m_bloom = new XManager;
 	m_bloom->Initialize();
 	m_num = i;
-	/*四角いモデルのポジション初期化*/
-	m_playerPos = D3DXVECTOR3(0.0f, 0.25f, 0.0f);
-	m_xfile_Player->SetTranslation(m_playerPos);
-	/*読み込みたいファイルを引数に指定します*/
-	if (i == 0) {
-		m_xfile_Player->LoadXFile("Models/Player/player.x", true);
-		m_xfile_Player->SetScaling(0.5f);
-		m_xfile_Player->SetRotationY(180.0f);
-	}
-	else {
-		m_xfile_Player->LoadXFile("Models/Player/Player.x", true);
-		m_xfile_Player->SetScaling(0.5f);
-		m_xfile_Player->SetRotationY(180.0f);
-	}
 	m_bloom->LoadXFile("Models/Player/Bloom.x", false);
 	m_bloomPos = D3DXVECTOR3(0.05f, 0.0f, -0.1f);
 	m_bloom->SetScaling(0.5f);
@@ -48,15 +42,6 @@ void Player::Initialize(int i) {
 	m_coolTime.bCoolTime = false;
 	m_coolTime.coolTime = COOL_TIME;
 
-	m_maxSpeed = MAX_SPEED;
-	m_minSpeed = MIN_SPEED;
-
-	m_flowAngleX = 0;
-	m_flowAngleY = 0;
-	m_curveAngle = 0;
-
-	m_effectTime = 0;
-
 	Camera_Initialize();
 
 	m_angle = 90.0f * (D3DX_PI / 180.0f);
@@ -65,32 +50,33 @@ void Player::Initialize(int i) {
 
 void Player::Update() {
 	m_hit = false;
-	UpdateEffect();
 	MoveSide();
 	MoveForward();
-	FlowAnimation();
-
-	m_xfile_Player->Update();
 	m_bloom->Update();
-	m_xfile_Player->SetTranslation(m_playerPos.x + m_flowPos.x, m_playerPos.y + m_flowPos.y, m_playerPos.z + m_flowPos.z);
-	m_xfile_Player->SetRotationY(m_angle + 90.0f * (D3DX_PI / 180.0f));
-	m_xfile_Player->SetRotationZ(m_curveAngle);
-	m_bloom->SetTranslation(m_bloomPos.x + m_flowPos.x, m_bloomPos.y + m_flowPos.y, m_bloomPos.z + m_flowPos.z);
-	m_bloom->SetRotationY(m_angle - 90.0f * (D3DX_PI / 180.0f));
-	m_bloom->SetRotationZ(m_curveAngle);
+	m_player->SetTranslation(m_playerPos);
+	m_player->Update();
+	m_bloom->SetTranslation(m_bloomPos);
+	m_bloom->SetRotationY(m_angle + 90.0f * (D3DX_PI / 180.0f));
 	CheckCoolTime();
+	
+	//CalcDirection();
+	//MyOutputDebugString("x:%f y:%f z:%f\n", m_playerPos.x, m_playerPos.y, m_playerPos.z);
+	MyOutputDebugString("angle:%f\n", m_angle);
+
 }
 
 void Player::Draw() {
-	m_xfile_Player->Draw();
+	m_player->Draw();
+	
 	m_bloom->Draw();
 }
 
 void Player::Finalize() {
 	m_bloom->Finalize();
 	delete m_bloom;
-	m_xfile_Player->Finalize();
-	delete m_xfile_Player;
+	
+	m_player->Finalize();
+	delete m_player;
 }
 
 void Player::MoveForward() {
@@ -103,22 +89,22 @@ void Player::MoveForward() {
 	{
 		//当たったら減速　一定値以下になったらfalseにしてまた加速
 		m_playerVerocity -= 0.2f;
-		if (m_playerVerocity <= m_minSpeed)
+		if (m_playerVerocity <= 5.0f)
 		{
-			m_playerVerocity = m_minSpeed;
+			m_playerVerocity = 5.0f;
 			m_deceleration = false;
 		}
 	}
 
-	//プレイヤーの速さ
-	if (m_playerVerocity >= m_maxSpeed)
+	//プレイヤーの速さ　2.0より速くはならない
+	if (m_playerVerocity >= 10.0f)
 	{
-		m_playerVerocity = m_maxSpeed;
+		m_playerVerocity = 10.0f;
 	}
 	//0.01より遅くはならない
-	if (m_playerVerocity < m_minSpeed)
+	if (m_playerVerocity < 0.01f)
 	{
-		m_playerVerocity = m_minSpeed;
+		m_playerVerocity = 0.01f;
 	}
 	//自動前進
 	m_playerPos.z += sinf(m_angle) * 0.015f * m_playerVerocity;
@@ -132,79 +118,64 @@ void Player::MoveSide() {
 	if (m_num == 0) {
 		if (Input::GetKey(DIK_D) || g_diJoyState2[0] & BUTTON_RIGHT)
 		{
-			m_angle += ROTATE;
-			m_curveAngle += ROTATE / 2.0f;
-			if (m_curveAngle > CURVE_ANGLE_MAX)
+			/*m_playerPos.x += 0.05f; 
+			m_bloomPos.x += 0.05f;
+			m_dir = RIGHT;
+			if (m_playerPos.x >= 0.9f)
 			{
-				m_curveAngle = CURVE_ANGLE_MAX;
-			}
-			return;
+				HitWall();
+				Hit();
+			}*/
+			m_angle += ROTATE;
 		}
 		else if (Input::GetKey(DIK_A) || g_diJoyState2[0] & BUTTON_LEFT)
 		{
-			m_angle += -ROTATE;
-			m_curveAngle += -ROTATE / 2.0f;
-			if (m_curveAngle < -CURVE_ANGLE_MAX)
+			/*m_playerPos.x -= 0.05f;
+			m_bloomPos.x -= 0.05f;
+			m_dir = LEFT;
+			if (m_playerPos.x <= -0.9f)
 			{
-				m_curveAngle = -CURVE_ANGLE_MAX;
-			}
-			return;
+				HitWall();
+				Hit();
+			}*/
+			m_angle += -ROTATE;
 		}
+		/*else 
+		{
+			m_dir = NON;
+		}*/
 	}
 	else {
 		if (Input::GetKey(DIK_L) || g_diJoyState2[2] & BUTTON_RIGHT)
 		{
-			m_angle += ROTATE;
-			m_curveAngle += ROTATE / 2.0f;
-			if (m_curveAngle > CURVE_ANGLE_MAX)
+			/*m_playerPos.x += 0.05f;
+			m_bloomPos.x += 0.05f;
+			m_dir = RIGHT;
+			if (m_playerPos.x >= 0.9f)
 			{
-				m_curveAngle = CURVE_ANGLE_MAX;
-			}
-			return;
+				HitWall();
+				Hit();
+			}*/
+			m_angle += ROTATE;
 		}
 		else if (Input::GetKey(DIK_J) || g_diJoyState2[2] & BUTTON_LEFT)
 		{
-			m_angle += -ROTATE;
-			m_curveAngle += -ROTATE / 2.0f;
-			if (m_curveAngle < -CURVE_ANGLE_MAX)
+			/*m_playerPos.x -= 0.05f;
+			m_bloomPos.x -= 0.05f;
+			m_dir = LEFT;
+			if (m_playerPos.x <= -0.9f)
 			{
-				m_curveAngle = -CURVE_ANGLE_MAX;
-			}
-			return;
+				HitWall();
+				Hit();
+			}*/
+			m_angle += -ROTATE;
 		}
-	}
-	if (m_curveAngle > 0)
-	{
-		m_curveAngle += -ROTATE;
-		if (m_curveAngle < 0)
+		/*else
 		{
-			m_curveAngle = 0;
-		}
+			m_dir = NON;
+		}*/
 	}
-	else if (m_curveAngle < 0)
-	{
-		m_curveAngle += ROTATE;
-		if (m_curveAngle > 0)
-		{
-			m_curveAngle = 0;
-		}
-	}
-}
 
-void Player::FlowAnimation() {
-	m_flowPos.x = cosf(m_flowAngleX) * 0.01f;
-	m_flowPos.y = sinf(m_flowAngleY) * 0.01f;
-	m_flowPos.z = 0;
-	m_flowAngleX += rand() % 10 * 0.02f;
-	m_flowAngleY += rand() % 10 * 0.02f;
-	if (m_flowAngleX > 2 * D3DX_PI)
-	{
-		m_flowAngleX = 0;
-	}
-	if (m_flowAngleY > 2 * D3DX_PI)
-	{
-		m_flowAngleY = 0;
-	}
 }
 
 D3DXVECTOR3 Player::GetPlayerPosition() {
@@ -232,21 +203,21 @@ void Player::HitWall() {
 	}*/
 }
 
-//OBB* Player::GetOBB() {
+OBB& Player::GetOBB() const{
+	return m_player->GetOBB();
+}
+
+//COBBTree& Player::GetOBB() const{
 //	return m_xfile_Player->GetOBB();
 //}
 
-COBBTree& Player::GetOBB() const {
-	return m_xfile_Player->GetOBB();
-}
-
-D3DXMATRIX* Player::GetMatrix() {
-	return m_xfile_Player->GetMatrix();
-}
+//D3DXMATRIX* Player::GetMatrix() {
+//	return m_xfile_Player->GetMatrix();
+//}
 
 void Player::Rotation()
 {
-	m_xfile_Player->SetRotationZ(m_angle);
+	m_player->SetRotationZ(m_angle);
 }
 
 CoolTime& Player::GetCoolTime() {
@@ -256,7 +227,7 @@ CoolTime& Player::GetCoolTime() {
 void Player::CheckCoolTime() {
 	if (m_coolTime.bCoolTime)
 	{
-		m_coolTime.coolTime = 0;
+		m_coolTime.coolTime--;
 		if (m_coolTime.coolTime <= 0)
 		{
 			m_coolTime.bCoolTime = false;
@@ -296,34 +267,10 @@ float Player::GetPlayerAngle() {
 	return m_angle;
 }
 
-void Player::GetItemEffect(ITEM_TYPE type) {
-	if (type == TAIYAKI)
-	{
-		m_maxSpeed = 20.0f;
-		m_minSpeed = 10.0f;
-		m_effectTime = 150;
-	}
-	else if (type == MERONPAN)
-	{
-		m_maxSpeed = 7.5f;
-		m_minSpeed = 5.0f;
-		m_effectTime = 150;
-	}
+void Player::SetProjMat(D3DXMATRIX* mat) {
+	m_ProjMat = *mat;
 }
 
-void Player::UpdateEffect() {
-	if (m_effectTime > 0)
-	{
-		m_effectTime--;
-	}
-	else
-	{
-		m_effectTime = 0;
-		m_maxSpeed = MAX_SPEED;
-		m_minSpeed = MIN_SPEED;
-	}
-}
-
-D3DXVECTOR3 Player::GetPlayerFlow() {
-	return m_flowPos;
+void Player::SetViewMat(D3DXMATRIX* mat) {
+	m_ViewMat = *mat;
 }

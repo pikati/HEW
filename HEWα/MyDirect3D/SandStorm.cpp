@@ -1,5 +1,6 @@
 #include "SandStorm.h"
 #include "main.h"
+#include <stdlib.h>
 
 SandStorm::SandStorm()
 {
@@ -12,17 +13,15 @@ SandStorm::~SandStorm()
 
 void SandStorm::Initialize()
 {
-	m_pos.x = ((float)(rand() % 10) - 5.0f) * 0.2f;
-	m_pos.y = 0.2f;
-	m_pos.z = 5.0f;
-	m_pXmanager = new XManager;
-	m_pXmanager->Initialize();
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->LoadXFile("Models/Obst/obstacleSand.x", true);
-	m_pXmanager->SetScaling(1.0f);
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_obst = new Fbx;
+	m_obst->Initialize();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Load("Models/FBX/obstacleSandStorm.fbx", false);
+	m_obst->SetScaling(1.0f);
 	m_bEnable = false;
 	m_bHit = false;
-	m_elem = SANDSTORM;
+	m_elem = FIREDRIFTWOOD;
 }
 
 void SandStorm::Update() {
@@ -34,23 +33,20 @@ void SandStorm::Update() {
 		if (!m_bHit)
 		{
 			m_bEnable = true;
-			m_pXmanager->SetTranslation(m_pos);
-			m_pXmanager->Update();
+			m_obst->SetTranslation(m_pos);
+			m_obst->Update();
 		}
 	}
 }
 
 void SandStorm::Draw() {
-	if (m_bEnable)
-	{
-		m_pXmanager->SetTranslation(m_pos);
-		m_pXmanager->Draw();
-	}
+	m_obst->SetTranslation(m_pos);
+	m_obst->Draw();
 }
 
 void SandStorm::Finalize() {
-	m_pXmanager->Finalize();
-	delete m_pXmanager;
+	m_obst->Finalize();
+	delete m_obst;
 }
 
 D3DXVECTOR3 SandStorm::GetPosition() {
@@ -86,9 +82,9 @@ void SandStorm::SetPlayerPos(D3DXVECTOR3 pos) {
 	m_playerPos = pos;
 }
 
-//OBB* SandStorm::GetOBB() {
-//	return m_pXmanager->GetOBB();
-//}
+OBB& SandStorm::GetOBB()const {
+	return m_obst->GetOBB();
+}
 
 void SandStorm::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
@@ -102,17 +98,17 @@ void SandStorm::SetScale(D3DXVECTOR3 scale) {
 	m_scale = scale;
 }
 
-COBBTree& SandStorm::GetOBB() const{
-	return m_pXmanager->GetOBB();
-}
-
-D3DXMATRIX* SandStorm::GetMatrix() {
-	return m_pXmanager->GetMatrix();
-}
+//COBBTree& SandStorm::GetOBB() const {
+//	return m_obst->GetOBB();
+//}
+//
+//D3DXMATRIX* SandStorm::GetMatrix() {
+//	return m_obst->GetMatrix();
+//}
 
 void SandStorm::Reset() {
-	 m_bEnable = false;
-	 m_bHit = false;
+	m_bEnable = false;
+	m_bHit = false;
 }
 
 OBST_TYPE SandStorm::GetElem() {

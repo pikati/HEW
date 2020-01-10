@@ -1,7 +1,8 @@
 #pragma once
 #include "Wakka.h"
 #include "Enum.h"
-#include "COBBTree.h"
+//#include "COBBTree.h"
+#include "OBB.h"
 
 class WakkaManager
 {
@@ -36,8 +37,9 @@ public:
 	ELEM GetElem(int i);
 	void SetPlayerPosition(D3DXVECTOR3 playerPos);
 	void SetPlayerAngle(float angle);
-	COBBTree& GetOBB(int idx) const;
-	D3DXMATRIX* GetMatrix(int idx);
+	/*COBBTree& GetOBB(int idx) const;
+	D3DXMATRIX* GetMatrix(int idx);*/
+	OBB& GetOBB(int idx)const;
 	D3DXVECTOR3 GetPosition(int idx);
 	int GetDestroyObstacleNum();
 	void DestroyObstacleCountUp();

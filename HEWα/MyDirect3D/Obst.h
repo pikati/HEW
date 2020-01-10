@@ -2,7 +2,8 @@
 #include "XManager.h"
 #include "MyDirect3D.h"
 #include "Enum.h"
-#include "COBBTree.h"
+#include "OBB.h"
+#include "Fbx.h"
 
 enum OBST_TYPE{
 	FIREDRIFTWOOD,
@@ -15,7 +16,7 @@ enum OBST_TYPE{
 class Obst
 {
 protected:
-	XManager*		m_pXmanager;
+	Fbx*			m_obst;
 	D3DXVECTOR3		m_pos;
 	D3DXVECTOR3		m_rot;
 	D3DXVECTOR3		m_scale;
@@ -39,8 +40,9 @@ public:
 	virtual void	SetRotation(D3DXVECTOR3 rot) = 0;
 	virtual void	SetScale(D3DXVECTOR3 scale) = 0;
 	//virtual OBB*	GetOBB() = 0;
-	virtual COBBTree& GetOBB() const = 0;
-	virtual D3DXMATRIX* GetMatrix() = 0;
+	/*virtual COBBTree& GetOBB() const = 0;
+	virtual D3DXMATRIX* GetMatrix() = 0;*/
+	virtual OBB& GetOBB()const = 0;
 	virtual void	Reset() = 0;
 	virtual OBST_TYPE	GetElem() = 0;
 	virtual void	SetPlayerPos(D3DXVECTOR3 pos) = 0;

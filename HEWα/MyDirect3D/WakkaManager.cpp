@@ -265,12 +265,16 @@ void WakkaManager::SetPlayerAngle(float angle) {
 	}
 }
 
-COBBTree& WakkaManager::GetOBB(int idx) const{
-	return m_wakka[idx].GetOBB();
-}
+//COBBTree& WakkaManager::GetOBB(int idx) const{
+//	return m_wakka[idx].GetOBB();
+//}
+//
+//D3DXMATRIX* WakkaManager::GetMatrix(int idx) {
+//	return m_wakka[idx].GetMatrix();
+//}
 
-D3DXMATRIX* WakkaManager::GetMatrix(int idx) {
-	return m_wakka[idx].GetMatrix();
+OBB& WakkaManager::GetOBB(int idx)const {
+	return m_wakka[idx].GetOBB();
 }
 
 D3DXVECTOR3 WakkaManager::GetPosition(int idx) {

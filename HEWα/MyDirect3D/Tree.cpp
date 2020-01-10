@@ -13,17 +13,15 @@ Tree::~Tree()
 
 void Tree::Initialize()
 {
-	m_pos.x = /*((float)(rand() % 10) - 5.0f) * 0.2f*/0.0f;
-	m_pos.y = 0.2f;
-	m_pos.z = 5.0f;
-	m_pXmanager = new XManager;
-	m_pXmanager->Initialize();
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->LoadXFile("Models/Obst/obstacleTree.x", true);
-	m_pXmanager->SetScaling(1.0f);
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_obst = new Fbx;
+	m_obst->Initialize();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Load("Models/FBX/obstacleTree.fbx", false);
+	m_obst->SetScaling(1.0f);
 	m_bEnable = false;
 	m_bHit = false;
-	m_elem = TREE;
+	m_elem = FIREDRIFTWOOD;
 }
 
 void Tree::Update() {
@@ -35,23 +33,20 @@ void Tree::Update() {
 		if (!m_bHit)
 		{
 			m_bEnable = true;
-			m_pXmanager->SetTranslation(m_pos);
-			m_pXmanager->Update();
+			m_obst->SetTranslation(m_pos);
+			m_obst->Update();
 		}
 	}
 }
 
 void Tree::Draw() {
-	if (m_bEnable)
-	{
-		m_pXmanager->SetTranslation(m_pos);
-		m_pXmanager->Draw();
-	}
+	m_obst->SetTranslation(m_pos);
+	m_obst->Draw();
 }
 
 void Tree::Finalize() {
-	m_pXmanager->Finalize();
-	delete m_pXmanager;
+	m_obst->Finalize();
+	delete m_obst;
 }
 
 D3DXVECTOR3 Tree::GetPosition() {
@@ -86,10 +81,10 @@ float* Tree::CreateRondam(float* random) {
 void Tree::SetPlayerPos(D3DXVECTOR3 pos) {
 	m_playerPos = pos;
 }
-//
-//OBB* Tree::GetOBB() {
-//	return m_pXmanager->GetOBB();
-//}
+
+OBB& Tree::GetOBB()const {
+	return m_obst->GetOBB();
+}
 
 void Tree::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
@@ -103,13 +98,13 @@ void Tree::SetScale(D3DXVECTOR3 scale) {
 	m_scale = scale;
 }
 
-COBBTree& Tree::GetOBB() const {
-	return m_pXmanager->GetOBB();
-}
-
-D3DXMATRIX* Tree::GetMatrix() {
-	return m_pXmanager->GetMatrix();
-}
+//COBBTree& Tree::GetOBB() const {
+//	return m_obst->GetOBB();
+//}
+//
+//D3DXMATRIX* Tree::GetMatrix() {
+//	return m_obst->GetMatrix();
+//}
 
 void Tree::Reset() {
 	m_bEnable = false;

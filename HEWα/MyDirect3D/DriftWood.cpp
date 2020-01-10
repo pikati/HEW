@@ -11,22 +11,17 @@ DriftWood::~DriftWood()
 {
 }
 
-void DriftWood::Initialize() 
+void DriftWood::Initialize()
 {
-	m_pos.x = /*((float)(rand() % 10) - 5.0f) * 0.2f*/0.0f;
-	m_pos.y = 0.2f;
-	m_pos.z = 5.0f;
-	m_rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	m_scale = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
-	m_pXmanager = new XManager;
-	m_pXmanager->Initialize();
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->LoadXFile("Models/Obst/obstacleDriftWood.x", true);
-	m_pXmanager->SetScaling(1.0f);
-	m_pXmanager->SetRotation(0.0f, 90.0f, 0.0f);
+	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_obst = new Fbx;
+	m_obst->Initialize();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Load("Models/FBX/obstacleDriftWood.fbx", false);
+	m_obst->SetScaling(1.0f);
 	m_bEnable = false;
 	m_bHit = false;
-	m_elem = DRIFTWOOD;
+	m_elem = FIREDRIFTWOOD;
 }
 
 void DriftWood::Update() {
@@ -34,25 +29,24 @@ void DriftWood::Update() {
 	{
 		m_bEnable = false;
 	}
-	else 
-	{
+	else {
 		if (!m_bHit)
 		{
 			m_bEnable = true;
-			m_pXmanager->SetTranslation(m_pos);
-			m_pXmanager->Update();
+			m_obst->SetTranslation(m_pos);
+			m_obst->Update();
 		}
 	}
 }
 
 void DriftWood::Draw() {
-	m_pXmanager->SetTranslation(m_pos);
-	m_pXmanager->Draw();
+	m_obst->SetTranslation(m_pos);
+	m_obst->Draw();
 }
 
 void DriftWood::Finalize() {
-	m_pXmanager->Finalize();
-	delete m_pXmanager;
+	m_obst->Finalize();
+	delete m_obst;
 }
 
 D3DXVECTOR3 DriftWood::GetPosition() {
@@ -87,10 +81,10 @@ float* DriftWood::CreateRondam(float* random) {
 void DriftWood::SetPlayerPos(D3DXVECTOR3 pos) {
 	m_playerPos = pos;
 }
-//
-//OBB* DriftWood::GetOBB() {
-//	return m_pXmanager->GetOBB();
-//}
+
+OBB& DriftWood::GetOBB()const {
+	return m_obst->GetOBB();
+}
 
 void DriftWood::SetPosition(D3DXVECTOR3 pos) {
 	m_pos = pos;
@@ -104,13 +98,13 @@ void DriftWood::SetScale(D3DXVECTOR3 scale) {
 	m_scale = scale;
 }
 
-COBBTree& DriftWood::GetOBB() const{
-	return m_pXmanager->GetOBB();
-}
-
-D3DXMATRIX* DriftWood::GetMatrix() {
-	return m_pXmanager->GetMatrix();
-}
+//COBBTree& DriftWood::GetOBB() const {
+//	return m_obst->GetOBB();
+//}
+//
+//D3DXMATRIX* DriftWood::GetMatrix() {
+//	return m_obst->GetMatrix();
+//}
 
 void DriftWood::Reset() {
 	m_bEnable = false;

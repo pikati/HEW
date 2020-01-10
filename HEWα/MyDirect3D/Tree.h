@@ -16,13 +16,13 @@ public:
 	virtual void	CreateObstacle(D3DXVECTOR3 pos);
 	virtual float*	CreateRondam(float* random);
 	virtual void	SetPlayerPos(D3DXVECTOR3 pos);
-	//virtual OBB*	GetOBB();
+	virtual OBB&	GetOBB()const;
 	virtual void	SetPosition(D3DXVECTOR3 pos);
 	virtual void	SetRotation(D3DXVECTOR3 rot);
 	virtual void	SetScale(D3DXVECTOR3 scale);
-	virtual COBBTree& GetOBB() const;
-	virtual D3DXMATRIX* GetMatrix();
+	/*virtual COBBTree& GetOBB() const;
+	virtual D3DXMATRIX* GetMatrix();*/
 	virtual void	Reset();
-	virtual OBST_TYPE GetElem();
+	virtual OBST_TYPE	GetElem();
 };
 

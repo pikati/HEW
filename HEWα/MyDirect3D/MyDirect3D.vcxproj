@@ -26,7 +26,6 @@
     <ClCompile Include="COBBTree.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="DriftWood.cpp" />
-    <ClCompile Include="FbxModel.cpp" />
     <ClCompile Include="Fire.cpp" />
     <ClCompile Include="Goal.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -60,7 +59,6 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="DriftWood.h" />
     <ClInclude Include="Enum.h" />
-    <ClInclude Include="FbxModel.h" />
     <ClInclude Include="Fire.h" />
     <ClInclude Include="Goal.h" />
     <ClInclude Include="Input.h" />

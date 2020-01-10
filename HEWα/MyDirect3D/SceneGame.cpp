@@ -381,7 +381,7 @@ void SceneGame::ColP2O() {
 			ObstacleInfo* info = m_obstacleManager[idx].GetObstacleInfo(i);
 			D3DXMATRIX mat;
 			GetMatrix(info, mat);
-			if (Collision::CheckCollision(m_player[idx].GetOBB(), *m_player[idx].GetMatrix(), m_obstacleManager[idx].GetOBB(info->type), mat))
+			if (Collision::CheckCollision(m_player[idx].GetOBB(), m_obstacleManager[idx].GetOBB(info->type))
 			{
 				m_obstacleManager[idx].Hit(i);
 				m_player[idx].Hit();
@@ -404,7 +404,7 @@ void SceneGame::ColW2O() {
 					ObstacleInfo* info = m_obstacleManager[idx].GetObstacleInfo(i);
 					D3DXMATRIX mat;
 					GetMatrix(info, mat);
-					if (Collision::CheckCollision(m_wakka[idx].GetOBB(wakka), *m_wakka[idx].GetMatrix(wakka), m_obstacleManager[idx].GetOBB(info->type), mat))
+					if (Collision::CheckCollision(m_wakka[idx].GetOBB(wakka), m_obstacleManager[idx].GetOBB(info->type)))
 					{
 						m_wakka[idx].Hit(wakka);
 						/*障害物削除処理*/

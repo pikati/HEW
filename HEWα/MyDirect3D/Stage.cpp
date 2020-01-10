@@ -2,18 +2,18 @@
 #include "XManager.h"
 
 void Stage::Initialize(int n) {
-	m_stage = new XManager;
+	m_stage = new Fbx;
 	m_stage->Initialize();
 	switch (n) 
 	{
 	case 0:
-		m_stage->LoadXFile("Models/Stage.x", false);
+		m_stage->Load("Models/FBX/Stage.fbx", false);
 		break;
 	case 1:
-		m_stage->LoadXFile("Models/StageWall.x", true);
+		m_stage->Load("Models/FBX/StageWall.fbx", true);
 		break;
 	case 2:
-		m_stage->LoadXFile("Models/StageCurve.x", true);
+		m_stage->Load("Models/?FBX/StageCurve.fbx", true);
 		break;
 	}
 	m_pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
@@ -48,10 +48,14 @@ void Stage::SetScale(D3DXVECTOR3 sca) {
 	m_sca = sca;
 }
 
-COBBTree& Stage::GetOBB() const{
-	return m_stage->GetOBB();
-}
+//COBBTree& Stage::GetOBB() const{
+//	return m_stage->GetOBB();
+//}
+//
+//D3DXMATRIX* Stage::GetMatrix() {
+//	return m_stage->GetMatrix();
+//}
 
-D3DXMATRIX* Stage::GetMatrix() {
-	return m_stage->GetMatrix();
+OBB& Stage::GetOBB()const {
+	return m_stage->GetOBB();
 }
