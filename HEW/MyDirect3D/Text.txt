@@ -1,0 +1,110 @@
+OBBの値取得できてないから取得できるように城
+初手アクセス違反はnewの忘れの可能性が高いゾ0xcdcdcdcdとかな！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
+ObstacleFinalizeの終了処理に気使え
+createdObstの添え字戻った時に初期城
+
+ステージの初期化曲がるバージョン（できてない）
+/*m_stageManager = new StageManager;
+	m_stageManager->Initialize();
+	StageInfo info(D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(0.0f, 0.0f, 0.0f), D3DXVECTOR3(1.0f, 1.0f, 1.0f), STAGE_ROAD);
+	for (int i = 0; i < STAGE / 2; i++)
+	{
+		info.pos = D3DXVECTOR3(0.0f, -0.4f, i * 10.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.rot = D3DXVECTOR3(0.0f, 90.0f * D3DX_PI / 180.0f, 0.0f);
+	for (int i = 0; i < STAGE / 2; i++)
+	{
+		info.pos = D3DXVECTOR3(i * 10.0f, -0.4f, STAGE * 10.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.type = STAGE_TREE;
+	info.rot = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	for (int i = 0; i < STAGE; i++)
+	{
+		info.pos = D3DXVECTOR3(2.0f, 0.4f, i * 5.0f);
+		m_stageManager->CreateStage(info);
+		info.pos = D3DXVECTOR3(-2.0f, 0.4f, i * 5.0f);
+		m_stageManager->CreateStage(info);
+	}
+	info.rot = D3DXVECTOR3(0.0f, 90.0f * D3DX_PI / 180.0f, 0.0f);
+	m_stageManager->CreateStage(D3DXVECTOR3(2.5f, 0.4f, 50.0f + 2.0f), STAGE_TREE);
+	for (int i = 0; i < STAGE; i++)
+	{
+		info.pos = D3DXVECTOR3((i + 1) * 5.0f + 2.5f, 0.4f, 50.0f + 2.0f);
+		
+		m_stageManager->CreateStage(info);
+		info.pos = D3DXVECTOR3((i + 1) * 5.0f + 2.5f, 0.4f, i * 50.0f - 2.0f);
+		m_stageManager->CreateStage(info);
+	}*/
+
+	2020/2/12
+	Feverの処理はWakkaManagerにあるぞ
+
+	//回転してるから砂嵐のエフェクトに使え沿い
+	if (m_enable)
+	{
+		if (m_bPause == false)
+		{
+			for (int nCntParticle = 0; nCntParticle < MAX_FEVER_PARTICLE; nCntParticle++)
+			{
+				if (particles[nCntParticle].bUse)
+				{
+					m_radius[nCntParticle] += particles[nCntParticle].move.z;
+					m_info.angle += ROTATION_VALUE;
+					particles[nCntParticle].pos.x = m_posBase.x + cosf(m_info.angle + ROTATION_VALUE * nCntParticle) * m_radius[nCntParticle];
+					particles[nCntParticle].pos.z = m_posBase.z + sinf(m_info.angle + ROTATION_VALUE * nCntParticle) * m_radius[nCntParticle];
+					particles[nCntParticle].pos.y += particles[nCntParticle].move.y;
+
+					particles[nCntParticle].nLife--;
+					if (particles[nCntParticle].nLife <= 0)
+					{
+						particles[nCntParticle].bUse = false;
+						particles[nCntParticle].nIdxShadow = -1;
+					}
+					else
+					{
+						m_hsv.hue += HUE_VALUE;
+						float hue = m_hsv.hue + HUE_VALUE * nCntParticle;
+						if (hue > 1.0f)
+						{
+							hue -= 1.0f;
+						}
+						HSV2RGB(hue);
+						particles[nCntParticle].col.r = 1.0f;
+						particles[nCntParticle].col.g = 1.0f;
+						particles[nCntParticle].col.b = 1.0f;
+						particles[nCntParticle].col.a = 1.0f;
+						// 色の設定
+						SetColorParticle(nCntParticle, particles[nCntParticle].col);
+					}
+				}
+			}
+
+			// パーティクル発生
+			{
+				D3DXVECTOR3 pos;
+				D3DXVECTOR3 move;
+				int nLife;
+				float fSize;
+
+				pos = m_posBase;
+				move.x = 1.0f;
+				move.y = 0.15f;
+				move.z = 0.1f;
+
+				nLife = 10;
+				fSize = 2.0f;
+
+				// ビルボードの設定
+				SetParticle(pos, move, D3DXCOLOR(0.8f, 0.7f, 0.2f, 0.85f), nLife);
+			
+			}
+		}
+	}
+
+	2πradの値確認
+
+	Release版の不具合はメモリぶっ壊れてるか初期化忘れだぞ
+
+	viwePort変更しても座標変換済み行列で描画するときは画面の画素の位置？を直接指定するぞ

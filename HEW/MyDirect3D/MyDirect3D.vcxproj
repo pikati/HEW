@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="CameraMediator.cpp" />
+    <ClCompile Include="Cameran.cpp" />
+    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="Combo.cpp" />
+    <ClCompile Include="DisplaySandStorm.cpp" />
+    <ClCompile Include="DispResult.cpp" />
+    <ClCompile Include="DriftWood.cpp" />
+    <ClCompile Include="EmitterManager.cpp" />
+    <ClCompile Include="Fade.cpp" />
+    <ClCompile Include="Fbx.cpp" />
+    <ClCompile Include="FeverParticle.cpp" />
+    <ClCompile Include="Fire.cpp" />
+    <ClCompile Include="FlameParticle.cpp" />
+    <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="HitParticle.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="ItemManager.cpp" />
+    <ClCompile Include="Joycon.cpp" />
+    <ClCompile Include="Judge.cpp" />
+    <ClCompile Include="light.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Meronpan.cpp" />
+    <ClCompile Include="NormalParticle.cpp" />
+    <ClCompile Include="ObstacleManager.cpp" />
+    <ClCompile Include="PitFall.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerHitEffect.cpp" />
+    <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="Polygons.cpp" />
+    <ClCompile Include="PowerDownParticle.cpp" />
+    <ClCompile Include="PowerUpParticle.cpp" />
+    <ClCompile Include="SandStorm.cpp" />
+    <ClCompile Include="SandStormParticle.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="SceneGame.cpp" />
+    <ClCompile Include="SceneResult.cpp" />
+    <ClCompile Include="SceneTutorial.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="ScreenEffect.cpp" />
+    <ClCompile Include="shadow.cpp" />
+    <ClCompile Include="Sky.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="SpeedEffect.cpp" />
+    <ClCompile Include="StageManager.cpp" />
+    <ClCompile Include="StartCount.cpp" />
+    <ClCompile Include="Taiyaki.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextBack.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="SceneTitle.cpp" />
+    <ClCompile Include="Tree.cpp" />
+    <ClCompile Include="Wakka.cpp" />
+    <ClCompile Include="WakkaManager.cpp" />
+    <ClCompile Include="WaterParticle.cpp" />
+    <ClCompile Include="WinLose.cpp" />
+    <ClCompile Include="XManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="BaseScene.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="CameraMediator.h" />
+    <ClInclude Include="Cameran.h" />
+    <ClInclude Include="Circle.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Combo.h" />
+    <ClInclude Include="DisplaySandStorm.h" />
+    <ClInclude Include="DispResult.h" />
+    <ClInclude Include="DriftWood.h" />
+    <ClInclude Include="Emitter.h" />
+    <ClInclude Include="EmitterManager.h" />
+    <ClInclude Include="Fade.h" />
+    <ClInclude Include="Fbx.h" />
+    <ClInclude Include="FeverParticle.h" />
+    <ClInclude Include="Fire.h" />
+    <ClInclude Include="FlameParticle.h" />
+    <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="HitParticle.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="Joycon.h" />
+    <ClInclude Include="Judge.h" />
+    <ClInclude Include="light.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Meronpan.h" />
+    <ClInclude Include="MyDirect3D.h" />
+    <ClInclude Include="NormalParticle.h" />
+    <ClInclude Include="Obst.h" />
+    <ClInclude Include="ObstacleManager.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="PitFall.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerHitEffect.h" />
+    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="Polygons.h" />
+    <ClInclude Include="PowerDownParticle.h" />
+    <ClInclude Include="PowerUpParticle.h" />
+    <ClInclude Include="SandStorm.h" />
+    <ClInclude Include="SandStormParticle.h" />
+    <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="SceneGame.h" />
+    <ClInclude Include="SceneResult.h" />
+    <ClInclude Include="SceneTutorial.h" />
+    <ClInclude Include="Score.h" />
+    <ClInclude Include="ScreenEffect.h" />
+    <ClInclude Include="shadow.h" />
+    <ClInclude Include="Sky.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="SpeedEffect.h" />
+    <ClInclude Include="Stage.h" />
+    <ClInclude Include="StageManager.h" />
+    <ClInclude Include="StartCount.h" />
+    <ClInclude Include="Taiyaki.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextBack.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="SceneTitle.h" />
+    <ClInclude Include="Tree.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="Wakka.h" />
+    <ClInclude Include="WakkaManager.h" />
+    <ClInclude Include="WaterParticle.h" />
+    <ClInclude Include="WinLose.h" />
+    <ClInclude Include="XManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Text.txt" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{2453DC07-7132-4954-8C0E-7AF9454B44E4}</ProjectGuid>
+    <RootNamespace>MyDirect3D</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <IncludePath>D:\ProgramFiles\DirectX9 June\Include;$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ProgramFiles\DirectX9 June\Lib\x86;$(DXSDK_DIR)lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\ProgramFiles\DirectX9 June\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\ProgramFiles\DirectX9 June\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\ProgramFiles\FBXSDK\2019.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\ProgramFiles\FBXSDK\2019.0\lib\vs2015\x86\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\ProgramFiles\FBXSDK\2019.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>libfbxsdk-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\ProgramFiles\FBXSDK\2019.0\lib\vs2015\x86\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

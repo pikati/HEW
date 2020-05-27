@@ -1,0 +1,37 @@
+﻿  EmitterManager.cpp
+  Fbx.cpp
+D:\Develop\HAL\HEWβ\MyDirect3D\Fbx.cpp(311,68): warning C4244: '=': 'T' から 'float' への変換です。データが失われる可能性があります。
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+D:\Develop\HAL\HEWβ\MyDirect3D\Fbx.cpp(312,68): warning C4244: '=': 'T' から 'float' への変換です。データが失われる可能性があります。
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+D:\Develop\HAL\HEWβ\MyDirect3D\Fbx.cpp(313,68): warning C4244: '=': 'T' から 'float' への変換です。データが失われる可能性があります。
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+D:\Develop\HAL\HEWβ\MyDirect3D\Fbx.cpp(343,89): warning C4244: '=': 'T' から 'FLOAT' への変換です。データが失われる可能性があります。
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+D:\Develop\HAL\HEWβ\MyDirect3D\Fbx.cpp(344,83): warning C4244: '=': 'T' から 'FLOAT' への変換です。データが失われる可能性があります。
+          with
+          [
+              T=fbxsdk::FbxDouble
+          ]
+  ObstacleManager.cpp
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(29,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(36,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(53,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(76,14): warning C4018: '>=': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(89,14): warning C4018: '>=': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(144,23): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  SceneGame.cpp
+  コードを生成中...
+  MyDirect3D.vcxproj -> D:\Develop\HAL\HEWβ\Debug\MyDirect3D.exe

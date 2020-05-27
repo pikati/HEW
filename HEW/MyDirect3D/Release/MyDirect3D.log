@@ -1,0 +1,13 @@
+﻿  ObstacleManager.cpp
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(29,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(36,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(53,20): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(76,14): warning C4018: '>=': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(89,14): warning C4018: '>=': signed と unsigned の数値を比較しようとしました。
+D:\Develop\HAL\HEWβ\MyDirect3D\ObstacleManager.cpp(145,23): warning C4018: '<': signed と unsigned の数値を比較しようとしました。
+  コード生成しています。
+  3 of 1584 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
+  コード生成が終了しました。
+  MyDirect3D.vcxproj -> D:\Develop\HAL\HEWβ\Release\MyDirect3D.exe
